@@ -6,7 +6,7 @@ breed [ all-sea-fury sea-fury ]
 breed [ all-t33 t33 ]
 breed [ all-soldiers soldier ]
 
-turtles-own [ firing_range health_points ]       ; both wolves and sheep have energy
+turtles-own [ firing-range health-points ]       ; both wolves and sheep have energy
 
 to setup
   clear-all
@@ -15,7 +15,7 @@ to setup
     set color blue
     set size 1.5  ; easier to see
     set label-color blue - 2
-    set firing_range 100
+    set firing-range 10
     setxy random-xcor random-ycor
   ]
 
@@ -25,6 +25,8 @@ to setup
     set size 1
     set label-color red - 2
     setxy random-xcor random-ycor
+    set health-points 100
+    set label health-points
   ]
 
   display-labels
@@ -47,15 +49,24 @@ end
 
 to move  ; turtle procedure
   ;let nearest-neighbor min-one-of other all-soldiers [distance myself]
-  let potential-targets all-soldiers in-cone 10 90
-  let target min-one-of potential-targets [distance myself]
-  if target != nobody [
+  let potential-targets all-soldiers in-cone firing-range 30
+  let target max-one-of potential-targets [distance myself]
+  ifelse target != nobody [
     let x0 xcor
     let y0 ycor
     let x1 [xcor] of target
     let y1 [ycor] of target
     let new-heading atan (x1 - x0) (y1 - y0)
     set heading new-heading
+    ask target [
+      set health-points health-points - 10
+      ;display-labels
+      death
+    ]
+  ]
+  [
+    rt random 15
+    lt random 15
   ]
 
   fd 1
@@ -63,12 +74,17 @@ end
 
 to death  ; turtle procedure (i.e. both wolf and sheep procedure)
   ; when energy dips below zero, die
-  if health_points < 0 [ die ]
+  if health-points < 0 [ die ]
 end
 
 
 to display-labels
-  ask turtles [ set label "" ]
+  ifelse show-health = false [
+    ask turtles [ set label "" ]
+  ]
+  [
+    ask turtles [ set label health-points ]
+  ]
 end
 
 
@@ -165,7 +181,7 @@ initial-number-b26
 initial-number-b26
 0
 10
-2.0
+5.0
 1
 1
 NIL
@@ -185,6 +201,17 @@ initial-number-soldiers
 1
 NIL
 HORIZONTAL
+
+SWITCH
+210
+50
+342
+83
+show-health
+show-health
+0
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?
