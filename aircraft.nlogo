@@ -4,34 +4,26 @@ globals [ max-sheep ]  ; don't let the sheep population grow too large
 breed [ all-b26 b26 ]  ; sheep is its own plural, so we use "a-sheep" as the singular
 breed [ all-sea-fury sea-fury ]
 breed [ all-t33 t33 ]
+breed [ all-soldiers soldier ]
 
-turtles-own [ range ]       ; both wolves and sheep have energy
+turtles-own [ firing_range health_points ]       ; both wolves and sheep have energy
 
 to setup
   clear-all
 
-  ; Check model-version switch
-  ; if we're not modeling grass, then the sheep don't need to eat to survive
-  ; otherwise each grass' state of growth and growing logic need to be set up
-  ifelse model-version = "sheep-wolves-grass" [
-    ask patches [
-      set pcolor one-of [ green brown ]
-      ifelse pcolor = green
-        [ set countdown grass-regrowth-time ]
-      [ set countdown random grass-regrowth-time ] ; initialize grass regrowth clocks randomly for brown patches
-    ]
-  ]
-  [
-    ask patches [ set pcolor green ]
-  ]
-
-  create-b26 initial-number-b26  ; create the sheep, then initialize their variables
-  [
-    set shape  "arrow"
+  create-all-b26 initial-number-b26 [ ; create the sheep, then initialize their variables
     set color blue
     set size 1.5  ; easier to see
     set label-color blue - 2
-    set range 100
+    set firing_range 100
+    setxy random-xcor random-ycor
+  ]
+
+  create-all-soldiers initial-number-soldiers [
+    set shape "circle"
+    set color red
+    set size 1
+    set label-color red - 2
     setxy random-xcor random-ycor
   ]
 
@@ -46,44 +38,37 @@ to go
   ;if not any? wolves and count sheep > max-sheep [ user-message "The sheep have inherited the earth" stop ]
   ask all-b26 [
     move
-    set energy energy - 1  ; wolves lose energy as they move
-    eat-sheep ; wolves eat a sheep on their patch
     death ; wolves die if they run out of energy
-    reproduce-wolves ; wolves reproduce at a random rate governed by a slider
   ]
-
-  if model-version = "sheep-wolves-grass" [ ask patches [ grow-grass ] ]
 
   tick
   display-labels
 end
 
 to move  ; turtle procedure
-  rt random 50
-  lt random 50
-  fd 1
-end
-
-to eat-sheep  ; wolf procedure
-  let prey one-of sheep-here                    ; grab a random sheep
-  if prey != nobody  [                          ; did we get one? if so,
-    ask prey [ die ]                            ; kill it, and...
-    set energy energy + wolf-gain-from-food     ; get energy from eating
+  ;let nearest-neighbor min-one-of other all-soldiers [distance myself]
+  let potential-targets all-soldiers in-cone 10 90
+  let target min-one-of potential-targets [distance myself]
+  if target != nobody [
+    let x0 xcor
+    let y0 ycor
+    let x1 [xcor] of target
+    let y1 [ycor] of target
+    let new-heading atan (x1 - x0) (y1 - y0)
+    set heading new-heading
   ]
+
+  fd 1
 end
 
 to death  ; turtle procedure (i.e. both wolf and sheep procedure)
   ; when energy dips below zero, die
-  if energy < 0 [ die ]
+  if health_points < 0 [ die ]
 end
 
 
 to display-labels
   ask turtles [ set label "" ]
-  if show-energy? [
-    ask wolves [ set label round energy ]
-    if model-version = "sheep-wolves-grass" [ ask sheep [ set label round energy ] ]
-  ]
 end
 
 
@@ -117,116 +102,11 @@ GRAPHICS-WINDOW
 ticks
 30.0
 
-SLIDER
-5
-60
-179
-93
-initial-number-sheep
-initial-number-sheep
-0
-250
-100.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-5
-196
-179
-229
-sheep-gain-from-food
-sheep-gain-from-food
-0.0
-50.0
-4.0
-1.0
-1
-NIL
-HORIZONTAL
-
-SLIDER
-5
-231
-179
-264
-sheep-reproduce
-sheep-reproduce
-1.0
-20.0
-4.0
-1.0
-1
-%
-HORIZONTAL
-
-SLIDER
-185
-60
-350
-93
-initial-number-wolves
-initial-number-wolves
-0
-250
-50.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-183
-195
-348
-228
-wolf-gain-from-food
-wolf-gain-from-food
-0.0
-100.0
-20.0
-1.0
-1
-NIL
-HORIZONTAL
-
-SLIDER
-183
-231
-348
-264
-wolf-reproduce
-wolf-reproduce
-0.0
-20.0
-5.0
-1.0
-1
-%
-HORIZONTAL
-
-SLIDER
-40
-100
-252
-133
-grass-regrowth-time
-grass-regrowth-time
-0
-100
-30.0
-1
-1
-NIL
-HORIZONTAL
-
 BUTTON
-40
-140
-109
-173
+20
+275
+89
+308
 setup
 setup
 NIL
@@ -240,10 +120,10 @@ NIL
 1
 
 BUTTON
-115
-140
-190
-173
+95
+275
+170
+308
 go
 go
 T
@@ -276,79 +156,35 @@ PENS
 "wolves" 1.0 0 -16449023 true "" "plot count wolves"
 "grass / 4" 1.0 0 -10899396 true "" "if model-version = \"sheep-wolves-grass\" [ plot count grass / 4 ]"
 
-MONITOR
-41
-308
-111
-353
-sheep
-count sheep
-3
-1
-11
-
-MONITOR
-115
-308
-185
-353
-wolves
-count wolves
-3
-1
-11
-
-MONITOR
-191
-308
-256
-353
-grass
-count grass / 4
-0
-1
-11
-
-TEXTBOX
-20
-178
-160
-196
-Sheep settings
-11
-0.0
-0
-
-TEXTBOX
-198
-176
-311
-194
-Wolf settings
-11
-0.0
-0
-
-SWITCH
-105
-270
-241
-303
-show-energy?
-show-energy?
-1
-1
--1000
-
-CHOOSER
-5
-10
-350
+SLIDER
 55
-model-version
-model-version
-"sheep-wolves" "sheep-wolves-grass"
+170
+227
+203
+initial-number-b26
+initial-number-b26
 0
+10
+2.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+60
+90
+257
+123
+initial-number-soldiers
+initial-number-soldiers
+0
+100
+50.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
