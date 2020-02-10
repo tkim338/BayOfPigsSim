@@ -29,7 +29,7 @@ to setup
 end
 
 to setup-attackers
-  create-attackers number [ setxy random-xcor -25 set color red set heading 0 set energy 50 set accuracy 0.8 set attackRange 10 set damage 10]
+  create-attackers number [ setxy random-xcor -25 set color red set heading 0 set energy 50 set accuracy 0.8 set attackRange 10 set damage 10 set targetLocationX 0 set targetLocationY 25]
 end
 
 to setup-defenders
@@ -40,10 +40,11 @@ to move-attackers
   ask attackers[
     ifelse count defenders in-radius attackRange >= 1 [
       set color 18
+      set heading towards min-one-of defenders [distance myself]
       ask min-one-of defenders [distance myself ] [set energy energy - 5]
     ]
     [
-      set heading towards min-one-of defenders [distance myself]
+      set heading towardsxy targetLocationX targetLocationY
       set color red
       forward 0.5
     ]
