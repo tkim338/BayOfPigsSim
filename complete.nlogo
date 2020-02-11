@@ -5,8 +5,9 @@ breed [ allSeaFury seaFury ]
 breed [ allT33 t33 ]
 breed [ allSoldiers soldier ]
 
-turtles-own [healthPoints accuracy attackRange damage fireRate moveSpeed]
+turtles-own [healthPoints accuracy attackRange damage fireRate moveSpeed ]
 attackers-own [targetLocationX targetLocationY]
+allB26-own [ bombRadius ammoVolume resupplyX resupplyY ]
 
 to go
   if ticks >= 500 [ stop ]
@@ -39,21 +40,44 @@ to setup
 end
 
 to setup-attackers
-  create-attackers attacker-number [ setxy random-xcor -25 set color red set heading 0 set healthPoints 50 set accuracy 0.8 set attackRange 10 set damage 10 set targetLocationX 0 set targetLocationY 25]
+  create-attackers attacker-number [
+    setxy random-xcor -25
+    set color red
+    set heading 0
+    set healthPoints 50
+    set accuracy 0.8
+    set attackRange 10
+    set damage 10
+    set targetLocationX 0
+    set targetLocationY 25
+  ]
 end
 
 to setup-defenders
-  create-defenders defender-number [ setxy random-xcor 25 set color blue set heading 180 set healthPoints 50 set accuracy 0.8 set attackRange 10 set damage 10]
+  create-defenders defender-number [
+    setxy random-xcor 25
+    set color blue
+    set heading 180
+    set healthPoints 50
+    set accuracy 0.8
+    set attackRange 10
+    set damage 10
+  ]
 end
 
 to setup-allB26
   create-allB26 initial-number-b26 [
     set color red - 1
-    set size 3
+    set size 2
     set label-color blue - 2
     set attackRange 10
+    set bombRadius 2
     setxy random-xcor -25
     set healthPoints 100
+    set shape "airplane"
+    set resupplyX 0
+    set resupplyY -25
+    set ammoVolume 20
   ]
 end
 
@@ -63,7 +87,7 @@ to move-attackers
       ifelse count attackers in-radius attackRange with [color = 18] >= count attackers in-radius attackRange with [color = red] [
         set heading towardsxy targetLocationX targetLocationY
         set color red
-        forward 0.5
+        forward 0.1
       ]
       [
         set color 18
@@ -74,7 +98,7 @@ to move-attackers
     [
       set heading towardsxy targetLocationX targetLocationY
       set color red
-      forward 0.5
+      forward 0.1
     ]
   ]
 end
@@ -88,32 +112,43 @@ to move-defenders
     [
       set heading towards min-one-of attackers [distance myself]
       set color blue
-      forward 0.5
+      forward 0.1
     ]
   ]
 end
 
 to move-allB26
   ask allB26 [
-    let potential-targets defenders in-cone attackRange 30
-    let target max-one-of potential-targets [distance myself]
-    ifelse target != nobody [
-      let x0 xcor
-      let y0 ycor
-      let x1 [xcor] of target
-      let y1 [ycor] of target
-      let new-heading atan (x1 - x0) (y1 - y0)
-      set heading new-heading
-      ask target [ set healthPoints healthPoints - 10 ]
+    ifelse ammoVolume >= 0 [
+      let potential-targets defenders in-cone attackRange 30
+      let farTarget max-one-of potential-targets [distance myself]
+      let closeTargets defenders in-radius bombRadius
+      ifelse farTarget != nobody [
+        let x0 xcor
+        let y0 ycor
+        let x1 [xcor] of farTarget
+        let y1 [ycor] of farTarget
+        let new-heading atan (x1 - x0) (y1 - y0)
+        set heading new-heading
+      ]
+      [
+        rt random 15
+        lt random 15
+      ]
+
+      ask closeTargets [ set healthPoints healthPoints - 2 ]
+      if count closeTargets > 0 [ set ammoVolume (ammoVolume - 1) ]
     ]
     [
-      rt random 15
-      lt random 15
+      set heading towardsxy resupplyX resupplyY
     ]
+
     if xcor >= (max-pxcor - 1) [ set heading 270 ]
     if xcor <= (min-pxcor + 1) [ set heading 90 ]
     if ycor >= (max-pycor - 1) [ set heading 180 ]
     if ycor <= (min-pycor + 1) [ set heading 0 ]
+
+    if distancexy resupplyX resupplyY < 5 [ set ammoVolume 20 ]
 
     fd 2
   ]
@@ -215,17 +250,6 @@ count attackers
 1
 11
 
-SWITCH
-17
-191
-161
-224
-show-energy?
-show-energy?
-1
-1
--1000
-
 PLOT
 9
 247
@@ -253,8 +277,8 @@ SLIDER
 defender-number
 defender-number
 0
-100
-50.0
+500
+382.0
 1
 1
 NIL
@@ -268,33 +292,33 @@ SLIDER
 attacker-number
 attacker-number
 0
-100
-50.0
+30
+30.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-152
-600
-324
-633
+35
+529
+207
+562
 initial-number-b26
 initial-number-b26
 0
-100
-50.0
+20
+6.0
 1
 1
 NIL
 HORIZONTAL
 
 SWITCH
-399
-582
-523
-615
+12
+585
+136
+618
 show-health
 show-health
 1
