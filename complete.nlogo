@@ -1,12 +1,16 @@
 breed [attackers attacker] ; these are ground troops
 breed [defenders defender]
-breed [ allB26 b26 ]
+breed [ allAttackingB26 attackingB26 ]
+breed [ allDefendingB26 defendingB26 ]
 breed [ allSeaFury seaFury ]
 breed [ allT33 t33 ]
 
-turtles-own [healthPoints accuracy attackRange damage fireRate moveSpeed ]
+turtles-own [ healthPoints accuracy attackRange damage moveSpeed turnAngle ]
 attackers-own [targetLocationX targetLocationY]
-allB26-own [ bombRadius ammoVolume resupplyX resupplyY ]
+allAttackingB26-own [ bombRadius bombDamage bombCount rocketRadius rocketRange rocketDamage rocketCount machineGunRange machineGunDamage machineGunAmmo resupplyX resupplyY ]
+allDefendingB26-own [ bombRadius bombDamage bombCount rocketRadius rocketRange rocketDamage rocketCount machineGunRange machineGunDamage machineGunAmmo resupplyX resupplyY ]
+allSeaFury-own []
+allT33-own []
 
 to go
   if ticks >= 500 [ stop ]
@@ -76,10 +80,10 @@ to setup-allB26
   ; 8 0.50 M2 Browning machine guns
   ; Rockets: Up to 10 HVAR rockets
   ; Bombs: Up to 6,000 lb (2,700 kg) capacity
-  create-allB26 initial-number-b26 [
+  create-allAttackingB26 initial-number-attacking-b26 [
     set color red - 1
     set size 2
-    set label-color blue - 2
+    set label-color red - 2
     set attackRange 10
     set bombRadius 2
     setxy random-xcor -25
@@ -87,7 +91,22 @@ to setup-allB26
     set shape "airplane"
     set resupplyX 0
     set resupplyY -25
-    set ammoVolume 20
+    set bombCount 12
+    set moveSpeed 2
+  ]
+  create-allDefendingB26 initial-number-defending-b26 [
+    set color blue - 1
+    set size 2
+    set label-color blue - 2
+    set attackRange 10
+    set bombRadius 2
+    setxy random-xcor 25
+    set healthPoints 100
+    set shape "airplane"
+    set resupplyX 0
+    set resupplyY -25
+    set bombCount 12
+    set moveSpeed 2
   ]
 end
 
@@ -99,6 +118,9 @@ to setup-allT33
   ;Armament
   ;Machine Guns: 2 x12.7mm M3 machine guns on the nose
   ;Hardpoints: 2 with a capacity of 2,000 lb (907 kg) of bombs or rockets (AT-33)
+  create-allT33 initial-number-t33 [
+    set moveSpeed 4
+  ]
 end
 
 to setup-allSeaFury
@@ -109,6 +131,10 @@ to setup-allSeaFury
   ;Guns: 4 × 20 mm Hispano Mk V autocannon
   ;Rockets: 12 × 3 in (76.2 mm) rockets or
   ;Bombs: 2,000 lb (907 kg) of bombs
+  create-allSeaFury initial-number-seaFury [
+    set moveSpeed 4
+    set bombCount 4
+  ]
 end
 
 to move-attackers
@@ -148,8 +174,8 @@ to move-defenders
 end
 
 to move-allB26
-  ask allB26 [
-    ifelse ammoVolume >= 0 [
+  ask allAttackingB26 [
+    ifelse bombCount >= 0 [
       let potential-targets defenders in-cone attackRange 30
       let farTarget max-one-of potential-targets [distance myself]
       let closeTargets defenders in-radius bombRadius
@@ -167,7 +193,7 @@ to move-allB26
       ]
 
       ask closeTargets [ set healthPoints healthPoints - 2 ]
-      if count closeTargets > 0 [ set ammoVolume (ammoVolume - 1) ]
+      if count closeTargets > 0 [ set bombCount (bombCount - 1) ]
     ]
     [
       set heading towardsxy resupplyX resupplyY
@@ -178,9 +204,9 @@ to move-allB26
     if ycor >= (max-pycor - 1) [ set heading 180 ]
     if ycor <= (min-pycor + 1) [ set heading 0 ]
 
-    if distancexy resupplyX resupplyY < 5 [ set ammoVolume 20 ]
+    if distancexy resupplyX resupplyY < 5 [ set bombCount 20 ]
 
-    fd 2
+    fd moveSpeed
   ]
 end
 
@@ -332,10 +358,10 @@ HORIZONTAL
 SLIDER
 35
 529
-207
+237
 562
-initial-number-b26
-initial-number-b26
+initial-number-defending-b26
+initial-number-defending-b26
 0
 20
 6.0
@@ -354,6 +380,51 @@ show-health
 1
 1
 -1000
+
+SLIDER
+245
+540
+418
+573
+initial-number-seaFury
+initial-number-seaFury
+0
+100
+50.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+189
+598
+361
+631
+initial-number-t33
+initial-number-t33
+0
+100
+50.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+108
+644
+312
+677
+initial-number-attacking-b26
+initial-number-attacking-b26
+0
+20
+7.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
