@@ -3,7 +3,6 @@ breed [defenders defender]
 breed [ allB26 b26 ]
 breed [ allSeaFury seaFury ]
 breed [ allT33 t33 ]
-breed [ allSoldiers soldier ]
 
 turtles-own [healthPoints accuracy attackRange damage fireRate moveSpeed ]
 attackers-own [targetLocationX targetLocationY]
@@ -66,6 +65,17 @@ to setup-defenders
 end
 
 to setup-allB26
+  ; Performance:
+  ; Maximum speed: 359 mph
+  ; Cruise speed: 266 mph
+  ; Range: 1,600 mi
+  ; Combat range: 700 mi
+
+  ; Guns:
+
+  ; 8 0.50 M2 Browning machine guns
+  ; Rockets: Up to 10 HVAR rockets
+  ; Bombs: Up to 6,000 lb (2,700 kg) capacity
   create-allB26 initial-number-b26 [
     set color red - 1
     set size 2
@@ -79,6 +89,26 @@ to setup-allB26
     set resupplyY -25
     set ammoVolume 20
   ]
+end
+
+to setup-allT33
+  ;Maximum speed: 600 mph (521 knots, 965 km/h)
+  ;Cruise speed: 455 mph (396 knots, 732 km/h)
+  ;Range: 1,275 mi (1,110 nmi, 2,050 km)
+
+  ;Armament
+  ;Machine Guns: 2 x12.7mm M3 machine guns on the nose
+  ;Hardpoints: 2 with a capacity of 2,000 lb (907 kg) of bombs or rockets (AT-33)
+end
+
+to setup-allSeaFury
+  ;Maximum speed: 460 mph (400 knots, 740 km/h)
+  ;Range: 700 mi (609 nmi, 1,126 km)
+
+  ;Armament
+  ;Guns: 4 × 20 mm Hispano Mk V autocannon
+  ;Rockets: 12 × 3 in (76.2 mm) rockets or
+  ;Bombs: 2,000 lb (907 kg) of bombs
 end
 
 to move-attackers
