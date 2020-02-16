@@ -9,8 +9,8 @@ turtles-own [ healthPoints accuracy attackRange damage moveSpeed turnAngle ]
 attackers-own [targetLocationX targetLocationY]
 allAttackingB26-own [ bombRadius bombDamage bombCount rocketRadius rocketRange rocketDamage rocketCount machineGunRange machineGunDamage machineGunAmmo resupplyX resupplyY ]
 allDefendingB26-own [ bombRadius bombDamage bombCount rocketRadius rocketRange rocketDamage rocketCount machineGunRange machineGunDamage machineGunAmmo resupplyX resupplyY ]
-allSeaFury-own []
-allT33-own []
+allSeaFury-own [ bombRadius bombDamage bombCount rocketRange rocketDamage rocketCount machineGunRange machineGunDamage machineGunAmmo resupplyX resupplyY ]
+allT33-own [ bombRadius bombDamage bombCount machineGunRange machineGunDamage machineGunAmmo resupplyX resupplyY]
 
 to go
   if ticks >= 500 [ stop ]
@@ -19,6 +19,8 @@ to go
   move-attackers
   move-defenders
   move-allB26
+  move-allT33
+  move-allSeaFury
   check-death
   tick
 end
@@ -36,6 +38,8 @@ to setup
   setup-defenders
 
   setup-allB26
+  setup-allT33
+  setup-allSeaFury
 
   display-labels
 
@@ -91,8 +95,13 @@ to setup-allB26
     set shape "airplane"
     set resupplyX 0
     set resupplyY -25
-    set bombCount 12
+    set bombCount 0;12
     set moveSpeed 2
+    set rocketCount 10
+    set rocketRadius 1
+    set bombDamage 2
+    set machineGunAmmo 100
+    set machineGunDamage 1
   ]
   create-allDefendingB26 initial-number-defending-b26 [
     set color blue - 1
@@ -107,6 +116,9 @@ to setup-allB26
     set resupplyY -25
     set bombCount 12
     set moveSpeed 2
+    set rocketCount 10
+    set rocketRadius 1
+    set bombDamage 2
   ]
 end
 
@@ -119,7 +131,19 @@ to setup-allT33
   ;Machine Guns: 2 x12.7mm M3 machine guns on the nose
   ;Hardpoints: 2 with a capacity of 2,000 lb (907 kg) of bombs or rockets (AT-33)
   create-allT33 initial-number-t33 [
-    set moveSpeed 4
+    set color blue - 1
+    set size 1.5
+    set label-color blue - 2
+    set attackRange 10
+    setxy random-xcor 25
+    set healthPoints 100
+    set shape "airplane"
+    set bombRadius 2
+    set bombCount 2
+    set bombDamage 2
+    set moveSpeed 2
+    set resupplyX 0
+    set resupplyY 25
   ]
 end
 
@@ -132,8 +156,18 @@ to setup-allSeaFury
   ;Rockets: 12 × 3 in (76.2 mm) rockets or
   ;Bombs: 2,000 lb (907 kg) of bombs
   create-allSeaFury initial-number-seaFury [
-    set moveSpeed 4
+    set color blue - 1
+    set size 1.5
+    set label-color blue - 2
+    set attackRange 10
+    setxy random-xcor 25
+    set healthPoints 100
+    set shape "airplane"
+    set moveSpeed 2
     set bombCount 4
+    set bombRadius 2
+    set rocketCount 12
+    set bombDamage 1
   ]
 end
 
@@ -148,7 +182,7 @@ to move-attackers
       [
         set color 18
         set heading towards min-one-of defenders [distance myself]
-        ask min-one-of defenders [distance myself ] [set healthPoints healthPoints - 5]
+        ask min-one-of defenders [distance myself ] [set healthPoints healthPoints - [damage] of one-of defenders]
       ]
     ]
     [
@@ -163,7 +197,7 @@ to move-defenders
   ask defenders[
     ifelse count attackers in-radius attackRange >= 1 [
       set color 108
-      ask min-one-of attackers [distance myself ] [set healthPoints healthPoints - 5]
+      ask min-one-of attackers [distance myself ] [set healthPoints healthPoints - [damage] of one-of attackers]
     ]
     [
       set heading towards min-one-of attackers [distance myself]
@@ -175,10 +209,16 @@ end
 
 to move-allB26
   ask allAttackingB26 [
-    ifelse bombCount >= 0 [
-      let potential-targets defenders in-cone attackRange 30
-      let farTarget max-one-of potential-targets [distance myself]
+    if bombCount >= 0 [
+      let potentialTargets defenders in-cone attackRange 30
+      let farTarget max-one-of potentialTargets [distance myself]
       let closeTargets defenders in-radius bombRadius
+      ask closeTargets [ set healthPoints healthPoints - [bombDamage] of one-of allAttackingB26 ]
+      if count closeTargets > 0 [ set bombCount (bombCount - 1) ]
+    ]
+    if machineGunAmmo >= 0 [
+      let potentialTargets defenders in-cone attackRange 30
+      let farTarget max-one-of potentialTargets [distance myself]
       ifelse farTarget != nobody [
         let x0 xcor
         let y0 ycor
@@ -192,7 +232,118 @@ to move-allB26
         lt random 15
       ]
 
-      ask closeTargets [ set healthPoints healthPoints - 2 ]
+      ask potentialTargets [ set healthPoints healthPoints - [machineGunDamage] of one-of allAttackingB26 ]
+      set machineGunAmmo (machineGunAmmo - count potentialTargets)
+    ]
+    if bombCount <= 0 and machineGunAmmo <= 0 [
+      set heading towardsxy resupplyX resupplyY
+    ]
+
+    if xcor >= (max-pxcor - 1) [ set heading 270 ]
+    if xcor <= (min-pxcor + 1) [ set heading 90 ]
+    if ycor >= (max-pycor - 1) [ set heading 180 ]
+    if ycor <= (min-pycor + 1) [ set heading 0 ]
+
+    if distancexy resupplyX resupplyY < 5 [
+      set bombCount 0;12
+      set machineGunAmmo 1000
+    ]
+
+    fd moveSpeed
+  ]
+  ask allDefendingB26 [
+    ifelse bombCount >= 0 [
+      let potentialTargets attackers in-cone attackRange 30
+      let farTarget max-one-of potentialTargets [distance myself]
+      let closeTargets attackers in-radius bombRadius
+      ifelse farTarget != nobody [
+        let x0 xcor
+        let y0 ycor
+        let x1 [xcor] of farTarget
+        let y1 [ycor] of farTarget
+        let new-heading atan (x1 - x0) (y1 - y0)
+        set heading new-heading
+      ]
+      [
+        rt random 15
+        lt random 15
+      ]
+
+      ask closeTargets [ set healthPoints healthPoints - [bombDamage] of one-of allDefendingB26 ]
+      if count closeTargets > 0 [ set bombCount (bombCount - 1) ]
+    ]
+    [
+      set heading towardsxy resupplyX resupplyY
+    ]
+
+    if xcor >= (max-pxcor - 1) [ set heading 270 ]
+    if xcor <= (min-pxcor + 1) [ set heading 90 ]
+    if ycor >= (max-pycor - 1) [ set heading 180 ]
+    if ycor <= (min-pycor + 1) [ set heading 0 ]
+
+    if distancexy resupplyX resupplyY < 5 [ set bombCount 20 ]
+
+    fd moveSpeed
+  ]
+end
+
+to move-allT33
+  ask allT33 [
+    ifelse bombCount >= 0 [
+      let potentialTargets attackers in-cone attackRange 30
+      let farTarget max-one-of potentialTargets [distance myself]
+      let closeTargets attackers in-radius bombRadius
+      ifelse farTarget != nobody [
+        let x0 xcor
+        let y0 ycor
+        let x1 [xcor] of farTarget
+        let y1 [ycor] of farTarget
+        let new-heading atan (x1 - x0) (y1 - y0)
+        set heading new-heading
+      ]
+      [
+        rt random 15
+        lt random 15
+      ]
+
+      ask closeTargets [ set healthPoints healthPoints - [bombDamage] of one-of allT33 ]
+      if count closeTargets > 0 [ set bombCount (bombCount - 1) ]
+    ]
+    [
+      set heading towardsxy resupplyX resupplyY
+    ]
+
+    if xcor >= (max-pxcor - 1) [ set heading 270 ]
+    if xcor <= (min-pxcor + 1) [ set heading 90 ]
+    if ycor >= (max-pycor - 1) [ set heading 180 ]
+    if ycor <= (min-pycor + 1) [ set heading 0 ]
+
+    if distancexy resupplyX resupplyY < 5 [ set bombCount 20 ]
+
+    fd moveSpeed
+  ]
+end
+
+to move-allSeaFury
+  ask allSeaFury [
+    ifelse bombCount >= 0 [
+      let potentialTargets attackers in-cone attackRange 30
+      let farTarget max-one-of potentialTargets [distance myself]
+      let closeTargets attackers in-radius bombRadius
+      ifelse farTarget != nobody [
+        let x0 xcor
+        let y0 ycor
+        let x1 [xcor] of farTarget
+        let y1 [ycor] of farTarget
+        let new-heading atan (x1 - x0) (y1 - y0)
+        set heading new-heading
+      ]
+      [
+        rt random 15
+        lt random 15
+      ]
+
+      ask closeTargets [ set healthPoints healthPoints - [bombDamage] of one-of allSeaFury ]
       if count closeTargets > 0 [ set bombCount (bombCount - 1) ]
     ]
     [
@@ -334,7 +485,7 @@ defender-number
 defender-number
 0
 500
-382.0
+398.0
 1
 1
 NIL
@@ -348,8 +499,8 @@ SLIDER
 attacker-number
 attacker-number
 0
-30
-30.0
+100
+2.0
 1
 1
 NIL
@@ -364,7 +515,7 @@ initial-number-defending-b26
 initial-number-defending-b26
 0
 20
-6.0
+0.0
 1
 1
 NIL
@@ -377,7 +528,7 @@ SWITCH
 618
 show-health
 show-health
-1
+0
 1
 -1000
 
@@ -389,8 +540,8 @@ SLIDER
 initial-number-seaFury
 initial-number-seaFury
 0
-100
-50.0
+10
+0.0
 1
 1
 NIL
@@ -404,8 +555,8 @@ SLIDER
 initial-number-t33
 initial-number-t33
 0
-100
-50.0
+10
+0.0
 1
 1
 NIL
@@ -420,7 +571,7 @@ initial-number-attacking-b26
 initial-number-attacking-b26
 0
 20
-7.0
+19.0
 1
 1
 NIL
