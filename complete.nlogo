@@ -216,6 +216,19 @@ to move-allB26
       ask closeTargets [ set healthPoints healthPoints - [bombDamage] of one-of allAttackingB26 ]
       if count closeTargets > 0 [ set bombCount (bombCount - 1) ]
     ]
+    if rocketCount >= 0 [
+      let potentialTargets defenders in-cone attackRange 30
+      let finalTarget one-of potentialTargets
+      if finalTarget != nobody [
+        ask finalTarget [
+          let nearbyTargets defenders in-radius ([rocketRadius] of one-of allAttackingB26)
+          ask nearbyTargets [
+            set healthPoints healthPoints - [rocketDamage] of one-of allAttackingB26
+          ]
+        ]
+        set rocketCount (rocketCount - 1)
+      ]
+    ]
     if machineGunAmmo >= 0 [
       let potentialTargets defenders in-cone attackRange 30
       let farTarget max-one-of potentialTargets [distance myself]
@@ -235,7 +248,7 @@ to move-allB26
       ask potentialTargets [ set healthPoints healthPoints - [machineGunDamage] of one-of allAttackingB26 ]
       set machineGunAmmo (machineGunAmmo - count potentialTargets)
     ]
-    if bombCount <= 0 and machineGunAmmo <= 0 [
+    if bombCount <= 0 and rocketCount <= 0 and machineGunAmmo <= 0 [
       set heading towardsxy resupplyX resupplyY
     ]
 
