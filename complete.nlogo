@@ -245,6 +245,13 @@ to move-defenders
           set healthPoints healthPoints - damageHolder
         ]
       ]
+      let defendingAircraft (turtle-set allDefendingB26 allT33 allSeaFury)
+      if count defendingAircraft with [supporting = 0] > 0 [
+        ask min-one-of defendingAircraft with [supporting = 0] [distance myself] [
+          set supporting 1
+          set target potentialTarget
+        ]
+      ]
     ]
     [
       set heading towards min-one-of attackers [distance myself]
@@ -284,7 +291,7 @@ to move-allB26
     ]
 
     ifelse supporting = 1 [
-      ifelse target != nobody [
+      ifelse target != nobody and member? target potentialTargets [
         set heading towards target
       ]
       [
@@ -322,29 +329,56 @@ to move-allB26
     fd moveSpeed
   ]
   ask allDefendingB26 [
-    ifelse bombCount >= 0 [
-      let potentialTargets attackers in-cone attackRange 30
-      let farTarget max-one-of potentialTargets [distance myself]
+    let potentialTargets attackers in-cone attackRange 30
+    let farTarget max-one-of potentialTargets [distance myself]
+    if bombCount >= 0 [
       let closeTargets attackers in-radius bombRadius
+      ask closeTargets [ set healthPoints healthPoints - b26_bombDamage ]
+      if count closeTargets > 0 [ set bombCount (bombCount - 1) ]
+    ]
+    if rocketCount >= 0 [
+      let finalTarget one-of potentialTargets
+      if finalTarget != nobody [
+        ask finalTarget [
+          let nearbyTargets attackers in-radius b26_rocketRadius
+          ask nearbyTargets [
+            set healthPoints healthPoints - b26_rocketDamage
+          ]
+        ]
+        set rocketCount (rocketCount - 1)
+      ]
+    ]
+    if machineGunAmmo >= 0 [
+      ask potentialTargets [ set healthPoints healthPoints - b26_machineGunDamage ]
+      set machineGunAmmo (machineGunAmmo - count potentialTargets)
+    ]
+    if bombCount <= 0 and rocketCount <= 0 and machineGunAmmo <= 0 [
+      set heading towardsxy resupplyX resupplyY
+    ]
+
+    ifelse supporting = 1 [
+      ifelse target != nobody and member? target potentialTargets [
+        set heading towards target
+      ]
+      [
+        set supporting 0
+        ifelse farTarget != nobody [
+          set heading towards farTarget
+        ]
+        [
+          rt random 15
+          lt random 15
+        ]
+      ]
+    ]
+    [
       ifelse farTarget != nobody [
-        let x0 xcor
-        let y0 ycor
-        let x1 [xcor] of farTarget
-        let y1 [ycor] of farTarget
-        let new-heading atan (x1 - x0) (y1 - y0)
-        set heading new-heading
+        set heading towards farTarget
       ]
       [
         rt random 15
         lt random 15
       ]
-
-      ask closeTargets [ set healthPoints healthPoints - b26_bombDamage ]
-      if count closeTargets > 0 [ set bombCount (bombCount - 1) ]
-      set machineGunAmmo (machineGunAmmo - count potentialTargets)
-    ]
-    [
-      set heading towardsxy resupplyX resupplyY
     ]
 
     if xcor >= (max-pxcor - 1) [ set heading 270 ]
@@ -372,24 +406,37 @@ to move-allT33
       if count closeTargets > 0 [ set bombCount (bombCount - 1) ]
     ]
     if machineGunAmmo >= 0 [
-      ifelse farTarget != nobody [
-        let x0 xcor
-        let y0 ycor
-        let x1 [xcor] of farTarget
-        let y1 [ycor] of farTarget
-        let new-heading atan (x1 - x0) (y1 - y0)
-        set heading new-heading
-      ]
-      [
-        rt random 15
-        lt random 15
-      ]
       ask potentialTargets [ set healthPoints healthPoints - t33_machineGunDamage ]
       set machineGunAmmo (machineGunAmmo - count potentialTargets)
     ]
 
     if bombCount <= 0 and machineGunAmmo <= 0 [
       set heading towardsxy resupplyX resupplyY
+    ]
+
+    ifelse supporting = 1 [
+      ifelse target != nobody and member? target potentialTargets [
+        set heading towards target
+      ]
+      [
+        set supporting 0
+        ifelse farTarget != nobody [
+          set heading towards farTarget
+        ]
+        [
+          rt random 15
+          lt random 15
+        ]
+      ]
+    ]
+    [
+      ifelse farTarget != nobody [
+        set heading towards farTarget
+      ]
+      [
+        rt random 15
+        lt random 15
+      ]
     ]
 
     if xcor >= (max-pxcor - 1) [ set heading 270 ]
@@ -428,24 +475,36 @@ to move-allSeaFury
       ]
     ]
     if machineGunAmmo >= 0 [
-      ifelse farTarget != nobody [
-        let x0 xcor
-        let y0 ycor
-        let x1 [xcor] of farTarget
-        let y1 [ycor] of farTarget
-        let new-heading atan (x1 - x0) (y1 - y0)
-        set heading new-heading
-      ]
-      [
-        rt random 15
-        lt random 15
-      ]
-
       ask potentialTargets [ set healthPoints healthPoints - seaFury_machineGunDamage ]
       set machineGunAmmo (machineGunAmmo - count potentialTargets)
     ]
     if bombCount <= 0 and rocketCount <= 0 and machineGunAmmo <= 0 [
       set heading towardsxy resupplyX resupplyY
+    ]
+
+    ifelse supporting = 1 [
+      ifelse target != nobody and member? target potentialTargets [
+        set heading towards target
+      ]
+      [
+        set supporting 0
+        ifelse farTarget != nobody [
+          set heading towards farTarget
+        ]
+        [
+          rt random 15
+          lt random 15
+        ]
+      ]
+    ]
+    [
+      ifelse farTarget != nobody [
+        set heading towards farTarget
+      ]
+      [
+        rt random 15
+        lt random 15
+      ]
     ]
 
     if xcor >= (max-pxcor - 1) [ set heading 270 ]
@@ -587,7 +646,7 @@ defender-number
 defender-number
 0
 500
-303.0
+108.0
 1
 1
 NIL
@@ -673,7 +732,7 @@ initial-number-attacking-b26
 initial-number-attacking-b26
 0
 20
-3.0
+2.0
 1
 1
 NIL
