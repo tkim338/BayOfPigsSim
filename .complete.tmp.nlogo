@@ -19,7 +19,7 @@ allSeaFury-own [ bombRadius bombDamage bombCount rocketRange rocketDamage rocket
 allT33-own [ bombRadius bombDamage bombCount machineGunRange machineGunDamage machineGunAmmo resupplyX resupplyY]
 
 to go
-  if ticks >= 500 [ stop ]
+  if ticks >= 5000 [ stop ]
   if count attackers = 0 [ stop ]
   if count defenders = 0 [ stop ]
   move-attackers
@@ -72,9 +72,10 @@ to setup-attackers
     set healthPoints 50
     set accuracy 0.3
     set attackRange 10
-    set damage 5
+    set damage 1
     set targetLocationX 0
     set targetLocationY 25
+    set moveSpeed 0.01
   ]
 end
 
@@ -86,7 +87,8 @@ to setup-defenders
     set healthPoints 50
     set accuracy 0.3
     set attackRange 10
-    set damage
+    set damage 1
+    set moveSpeed 0.01
   ]
 end
 
@@ -114,7 +116,7 @@ to setup-allB26
     set resupplyX 0
     set resupplyY -25
     set bombCount 12
-    set moveSpeed 2
+    set moveSpeed 0.
     set rocketCount 10
     set rocketRadius b26_rocketRadius
     set bombDamage b26_bombDamage
@@ -227,7 +229,7 @@ to move-attackers
     [
       set heading towardsxy targetLocationX targetLocationY
       set color red
-      forward 0.1
+      forward moveSpeed
     ]
   ]
 end
@@ -247,7 +249,7 @@ to move-defenders
     [
       set heading towards min-one-of attackers [distance myself]
       set color blue
-      forward 0.1
+      forward moveSpeed
     ]
   ]
 end
@@ -585,7 +587,7 @@ defender-number
 defender-number
 0
 500
-127.0
+108.0
 1
 1
 NIL
@@ -671,7 +673,7 @@ initial-number-attacking-b26
 initial-number-attacking-b26
 0
 20
-4.0
+3.0
 1
 1
 NIL
