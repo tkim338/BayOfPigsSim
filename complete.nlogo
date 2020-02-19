@@ -11,7 +11,7 @@ breed [ allDefendingB26 defendingB26 ]
 breed [ allSeaFury seaFury ]
 breed [ allT33 t33 ]
 
-turtles-own [ healthPoints accuracy attackRange damage moveSpeed turnAngle sightRange ]
+turtles-own [ healthPoints accuracy attackRange damage moveSpeed turnAngle sightRange supporting target]
 attackers-own [targetLocationX targetLocationY]
 allAttackingB26-own [ bombRadius bombDamage bombCount rocketRadius rocketRange rocketDamage rocketCount machineGunRange machineGunDamage machineGunAmmo resupplyX resupplyY ]
 allDefendingB26-own [ bombRadius bombDamage bombCount rocketRadius rocketRange rocketDamage rocketCount machineGunRange machineGunDamage machineGunAmmo resupplyX resupplyY ]
@@ -19,7 +19,7 @@ allSeaFury-own [ bombRadius bombDamage bombCount rocketRange rocketDamage rocket
 allT33-own [ bombRadius bombDamage bombCount machineGunRange machineGunDamage machineGunAmmo resupplyX resupplyY]
 
 to go
-  if ticks >= 500 [ stop ]
+  if ticks >= 5000 [ stop ]
   if count attackers = 0 [ stop ]
   if count defenders = 0 [ stop ]
   move-attackers
@@ -70,11 +70,12 @@ to setup-attackers
     set color red
     set heading 0
     set healthPoints 50
-    set accuracy 0.8
+    set accuracy 0.3
     set attackRange 10
-    set damage 10
+    set damage 1
     set targetLocationX 0
     set targetLocationY 25
+    set moveSpeed 0.01
   ]
 end
 
@@ -84,9 +85,10 @@ to setup-defenders
     set color blue
     set heading 180
     set healthPoints 50
-    set accuracy 0.8
+    set accuracy 0.3
     set attackRange 10
-    set damage 10
+    set damage 1
+    set moveSpeed 0.01
   ]
 end
 
@@ -114,12 +116,13 @@ to setup-allB26
     set resupplyX 0
     set resupplyY -25
     set bombCount 12
-    set moveSpeed 2
+    set moveSpeed 0.2
     set rocketCount 10
     set rocketRadius b26_rocketRadius
     set bombDamage b26_bombDamage
     set machineGunAmmo 1000
     set machineGunDamage b26_machineGunDamage
+    set supporting 0
   ]
   create-allDefendingB26 initial-number-defending-b26 [
     set color blue - 1
@@ -133,7 +136,7 @@ to setup-allB26
     set resupplyX 0
     set resupplyY -25
     set bombCount 12
-    set moveSpeed 2
+    set moveSpeed 0.2
     set rocketCount 10
     set rocketRadius b26_rocketRadius
     set bombDamage b26_bombDamage
@@ -161,7 +164,7 @@ to setup-allT33
     set bombRadius 2
     set bombCount 2
     set bombDamage 2
-    set moveSpeed 2
+    set moveSpeed 0.2
     set resupplyX 0
     set resupplyY 25
     set machineGunAmmo 1000
@@ -185,7 +188,7 @@ to setup-allSeaFury
     setxy random-xcor 25
     set healthPoints 100
     set shape "airplane"
-    set moveSpeed 2
+    set moveSpeed 0.2
     set bombCount 4
     set bombRadius 2
     set rocketCount 12
@@ -199,7 +202,7 @@ end
 
 to move-attackers
   ask attackers[
-    ifelse count defenders in-radius attackRange >= 1 [
+    ifelse count defenders with [healthPoints > 0] in-radius attackRange >= 1 [
       ifelse count attackers in-radius attackRange with [color = 18] >= count attackers in-radius attackRange with [color = red] [
         set heading towardsxy targetLocationX targetLocationY
         set color red
@@ -208,27 +211,45 @@ to move-attackers
       [
         set color 18
         set heading towards min-one-of defenders [distance myself]
-        ask min-one-of defenders [distance myself ] [set healthPoints healthPoints - [damage] of one-of defenders]
+        let potentialTarget min-one-of defenders with [healthPoints > 0] [distance myself]
+        let damageHolder damage
+        if random-float 1 < accuracy [
+          ask potentialTarget [
+            set healthPoints healthPoints - damageHolder
+          ]
+        ]
+        if count allAttackingB26 with [supporting = 0] > 0 [
+          ask min-one-of allAttackingB26 with [supporting = 0] [distance myself] [
+            set supporting 1
+            set target potentialTarget
+          ]
+        ]
       ]
     ]
     [
       set heading towardsxy targetLocationX targetLocationY
       set color red
-      forward 0.1
+      forward moveSpeed
     ]
   ]
 end
 
 to move-defenders
   ask defenders[
-    ifelse count attackers in-radius attackRange >= 1 [
+    ifelse count attackers with [healthPoints > 0] in-radius attackRange >= 1 [
       set color 108
-      ask min-one-of attackers [distance myself ] [set healthPoints healthPoints - [damage] of one-of attackers]
+      let potentialTarget min-one-of attackers with [healthPoints > 0] [distance myself]
+      let damageHolder damage
+      if random-float 1 < accuracy [
+        ask potentialTarget [
+          set healthPoints healthPoints - damageHolder
+        ]
+      ]
     ]
     [
       set heading towards min-one-of attackers [distance myself]
       set color blue
-      forward 0.1
+      forward moveSpeed
     ]
   ]
 end
@@ -255,24 +276,36 @@ to move-allB26
       ]
     ]
     if machineGunAmmo >= 0 [
-      ifelse farTarget != nobody [
-        let x0 xcor
-        let y0 ycor
-        let x1 [xcor] of farTarget
-        let y1 [ycor] of farTarget
-        let new-heading atan (x1 - x0) (y1 - y0)
-        set heading new-heading
-      ]
-      [
-        rt random 15
-        lt random 15
-      ]
-
       ask potentialTargets [ set healthPoints healthPoints - b26_machineGunDamage ]
       set machineGunAmmo (machineGunAmmo - count potentialTargets)
     ]
     if bombCount <= 0 and rocketCount <= 0 and machineGunAmmo <= 0 [
       set heading towardsxy resupplyX resupplyY
+    ]
+
+    ifelse supporting = 1 [
+      ifelse target != nobody [
+        set heading towards target
+      ]
+      [
+        set supporting 0
+        ifelse farTarget != nobody [
+          set heading towards farTarget
+        ]
+        [
+          rt random 15
+          lt random 15
+        ]
+      ]
+    ]
+    [
+      ifelse farTarget != nobody [
+        set heading towards farTarget
+      ]
+      [
+        rt random 15
+        lt random 15
+      ]
     ]
 
     if xcor >= (max-pxcor - 1) [ set heading 270 ]
@@ -554,7 +587,7 @@ defender-number
 defender-number
 0
 500
-398.0
+303.0
 1
 1
 NIL
@@ -569,7 +602,7 @@ attacker-number
 attacker-number
 0
 100
-11.0
+100.0
 1
 1
 NIL
@@ -584,7 +617,7 @@ initial-number-defending-b26
 initial-number-defending-b26
 0
 20
-12.0
+0.0
 1
 1
 NIL
@@ -597,7 +630,7 @@ SWITCH
 618
 show-health
 show-health
-0
+1
 1
 -1000
 
@@ -610,7 +643,7 @@ initial-number-seaFury
 initial-number-seaFury
 0
 10
-7.0
+0.0
 1
 1
 NIL
@@ -625,7 +658,7 @@ initial-number-t33
 initial-number-t33
 0
 10
-7.0
+0.0
 1
 1
 NIL
@@ -640,7 +673,7 @@ initial-number-attacking-b26
 initial-number-attacking-b26
 0
 20
-0.0
+3.0
 1
 1
 NIL
