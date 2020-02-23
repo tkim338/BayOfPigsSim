@@ -40,6 +40,7 @@ end
 
 to setup
   clear-all
+  import-drawing "bay_map.png"
   setup-patches
   setup-attackers
   setup-defenders
@@ -646,17 +647,17 @@ defender-number
 defender-number
 0
 500
-108.0
+200.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-24
-485
-196
-518
+22
+528
+194
+561
 attacker-number
 attacker-number
 0
@@ -668,25 +669,25 @@ NIL
 HORIZONTAL
 
 SLIDER
-35
-529
-237
-562
+215
+442
+417
+475
 initial-number-defending-b26
 initial-number-defending-b26
 0
 20
-0.0
+2.0
 1
 1
 NIL
 HORIZONTAL
 
 SWITCH
-12
-585
-136
-618
+13
+175
+137
+208
 show-health
 show-health
 1
@@ -694,10 +695,10 @@ show-health
 -1000
 
 SLIDER
-245
-540
-418
-573
+432
+443
+605
+476
 initial-number-seaFury
 initial-number-seaFury
 0
@@ -709,30 +710,30 @@ NIL
 HORIZONTAL
 
 SLIDER
-189
-598
-361
-631
+215
+483
+415
+516
 initial-number-t33
 initial-number-t33
 0
 10
-0.0
+1.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-108
-644
-312
-677
+212
+528
+417
+561
 initial-number-attacking-b26
 initial-number-attacking-b26
 0
 20
-2.0
+6.0
 1
 1
 NIL
