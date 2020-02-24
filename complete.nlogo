@@ -40,7 +40,7 @@ end
 
 to setup
   clear-all
-  import-drawing "bay_map.png"
+  import-drawing "./bay_map.png"
   setup-patches
   setup-attackers
   setup-defenders
