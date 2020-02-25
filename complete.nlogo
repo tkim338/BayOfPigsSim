@@ -2,6 +2,7 @@ globals [
   b26_bombDamage b26_machineGunDamage b26_rocketDamage b26_rocketRadius
   t33_machineGunDamage t33_bombDamage
   seaFury_machineGunDamage seaFury_bombDamage seaFury_rocketDamage seaFury_rocketRadius
+  patch-type moveSwampSpeed
 ]
 
 breed [attackers attacker] ; these are ground troops
@@ -17,6 +18,7 @@ allAttackingB26-own [ bombRadius bombDamage bombCount rocketRadius rocketRange r
 allDefendingB26-own [ bombRadius bombDamage bombCount rocketRadius rocketRange rocketDamage rocketCount machineGunRange machineGunDamage machineGunAmmo resupplyX resupplyY ]
 allSeaFury-own [ bombRadius bombDamage bombCount rocketRange rocketDamage rocketRadius rocketCount machineGunRange machineGunDamage machineGunAmmo resupplyX resupplyY ]
 allT33-own [ bombRadius bombDamage bombCount machineGunRange machineGunDamage machineGunAmmo resupplyX resupplyY]
+
 
 to go
   if ticks >= 5000 [ stop ]
@@ -40,8 +42,9 @@ end
 
 to setup
   clear-all
-  import-drawing "./bay_map.png"
+
   setup-patches
+  ask patches [setup-swamp]
   setup-attackers
   setup-defenders
 
@@ -65,6 +68,41 @@ to setup
   reset-ticks
 end
 
+to setup-patches ;; patch procedure
+  ask patches [ set pcolor green ]
+
+   ;import-drawing "bay_map.png"
+
+end
+
+to setup-swamp
+  ;swamp top right
+  if pxcor > -7 and pycor > 20[ set pcolor white set patch-type "swamp"]
+  if pxcor > -5 and pycor > 17[ set pcolor white set patch-type "swamp"]
+  if pxcor > -3 and pycor > 15[ set pcolor white set patch-type "swamp"]
+  if pxcor > -2 and pycor > 12[ set pcolor white set patch-type "swamp"]
+  if pxcor > -1 and pycor > 9[ set pcolor white set patch-type "swamp"]
+  if pxcor > 0 and pycor > 6[ set pcolor white set patch-type "swamp"]
+  if pxcor > 1 and pycor > 3[ set pcolor white set patch-type "swamp"]
+  if pxcor > 3 and pycor > 0[ set pcolor white set patch-type "swamp"]
+  if pxcor > 4 and pycor > -3[ set pcolor white set patch-type "swamp"]
+  if pxcor > 5 and pycor > -5[ set pcolor white set patch-type "swamp"]
+  if pxcor > 6 and pxcor < 24 and pycor > -6[ set pcolor white set patch-type "swamp"]
+  if pxcor > 8 and pxcor < 23 and pycor > -7[ set pcolor white set patch-type "swamp"]
+  if pxcor > 10 and pxcor < 22 and pycor > -8[ set pcolor white set patch-type "swamp"]
+  if pxcor > 13 and pxcor < 22 and pycor > -9[ set pcolor white set patch-type "swamp"]
+
+  ;swamp left
+  if pxcor < -22 and pycor < 17 and pycor > -11[ set pcolor white ]
+  if pxcor < -21 and pycor < 16 and pycor > -11[ set pcolor white ]
+  if pxcor < -20 and pycor < 15 and pycor > -11[ set pcolor white ]
+  if pxcor < -19 and pycor < 14 and pycor > -11[ set pcolor white ]
+  if pxcor < -18 and pycor < 13 and pycor > -11[ set pcolor white ]
+  if pxcor < -17 and pycor < 12 and pycor > 9 [ set pcolor white ]
+  if pxcor < -17 and pycor < 2 and pycor > -11[ set pcolor white ]
+  if pxcor < -16 and pycor < -2 and pycor > -11[ set pcolor white ]
+end
+
 to setup-attackers
   create-attackers attacker-number [
     setxy random-xcor -25
@@ -76,9 +114,8 @@ to setup-attackers
     set damage 1
     set targetLocationX 0
     set targetLocationY 25
-    set moveSpeed 0.01
-  ]
-end
+    set moveSpeed 0.01]
+ end
 
 to setup-defenders
   create-defenders defender-number [
@@ -207,7 +244,11 @@ to move-attackers
       ifelse count attackers in-radius attackRange with [color = 18] >= count attackers in-radius attackRange with [color = red] [
         set heading towardsxy targetLocationX targetLocationY
         set color red
-        forward 0.1
+        set moveSpeed 0.1
+        if pcolor = white
+    [set moveSpeed 0.02]
+        forward moveSpeed
+
       ]
       [
         set color 18
@@ -230,6 +271,11 @@ to move-attackers
     [
       set heading towardsxy targetLocationX targetLocationY
       set color red
+      set moveSpeed 0.1
+        if pcolor = white
+    [set moveSpeed 0.02]
+
+       ;forward moveSwampSpeed
       forward moveSpeed
     ]
   ]
@@ -257,6 +303,9 @@ to move-defenders
     [
       set heading towards min-one-of attackers [distance myself]
       set color blue
+      set moveSpeed 0.1
+        if pcolor = white
+    [set moveSpeed 0.02]
       forward moveSpeed
     ]
   ]
@@ -531,19 +580,15 @@ to display-labels
     ask turtles [ set label healthPoints ]
   ]
 end
-
-to setup-patches
-  ask patches [ set pcolor green ]
-end
 @#$#@#$#@
 GRAPHICS-WINDOW
-210
+219
 10
-626
-427
+639
+431
 -1
 -1
-8.0
+8.08
 1
 10
 1
@@ -677,7 +722,7 @@ initial-number-defending-b26
 initial-number-defending-b26
 0
 20
-2.0
+0.0
 1
 1
 NIL
@@ -710,15 +755,15 @@ NIL
 HORIZONTAL
 
 SLIDER
-215
-483
-415
-516
+216
+486
+416
+519
 initial-number-t33
 initial-number-t33
 0
 10
-1.0
+0.0
 1
 1
 NIL
@@ -733,7 +778,7 @@ initial-number-attacking-b26
 initial-number-attacking-b26
 0
 20
-6.0
+2.0
 1
 1
 NIL
