@@ -463,10 +463,19 @@ to move-allB26
           ]
         ]
 
-        if xcor >= (max-pxcor - 1) [ set heading 270 ]
-        if xcor <= (min-pxcor + 1) [ set heading 90 ]
-        if ycor >= (max-pycor - 1) [ set heading 180 ]
-        if ycor <= (min-pycor + 1) [ set heading 0 ]
+        if xcor >= max-pxcor [ set heading 270 ]
+        if xcor <= min-pxcor [ set heading 90 ]
+        if ycor >= max-pycor [ set heading 180 ]
+        if ycor <= min-pycor [ set heading 0 ]
+        ifelse xcor < max-pxcor and xcor > min-pxcor and ycor > min-pycor and ycor < max-pycor [
+          set resupplying false
+        ]
+        [
+          if resupplying = false [
+            set supplyDelay 50
+            set resupplying true
+          ]
+        ]
       ]
       [
 
@@ -478,10 +487,7 @@ to move-allB26
         ]
         set color orange + 1
       ]
-
-
-
-      ifelse distancexy resupplyX resupplyY < 5 [
+      ifelse distancexy resupplyX resupplyY < 2 [
         set bombCount 0
         set rocketCount 10
         set machineGunAmmo 1000
