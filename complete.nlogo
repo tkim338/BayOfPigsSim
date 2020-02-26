@@ -21,7 +21,7 @@ allT33-own [ bombRadius bombDamage bombCount machineGunRange machineGunDamage ma
 
 
 to go
-  if ticks >= 5000 [ stop ]
+  if ticks >= 20000 [ stop ]
   if count attackers = 0 [ stop ]
   if count defenders = 0 [ stop ]
   move-attackers
@@ -44,8 +44,9 @@ to setup
   clear-all
 
   setup-patches
-  ask patches [setup-swamp]
-  setup-attackers
+  ask patches [setup-swamp setup-water]
+  setup-attackers-beach-a
+  setup-attackers-beach-b
   setup-defenders
 
   setup-allB26
@@ -77,30 +78,87 @@ end
 
 to setup-swamp
   ;swamp top right
-  if pxcor > -7 and pycor > 20[ set pcolor white set patch-type "swamp"]
-  if pxcor > -5 and pycor > 17[ set pcolor white set patch-type "swamp"]
-  if pxcor > -3 and pycor > 15[ set pcolor white set patch-type "swamp"]
-  if pxcor > -2 and pycor > 12[ set pcolor white set patch-type "swamp"]
-  if pxcor > -1 and pycor > 9[ set pcolor white set patch-type "swamp"]
-  if pxcor > 0 and pycor > 6[ set pcolor white set patch-type "swamp"]
-  if pxcor > 1 and pycor > 3[ set pcolor white set patch-type "swamp"]
-  if pxcor > 3 and pycor > 0[ set pcolor white set patch-type "swamp"]
-  if pxcor > 4 and pycor > -3[ set pcolor white set patch-type "swamp"]
-  if pxcor > 5 and pycor > -5[ set pcolor white set patch-type "swamp"]
-  if pxcor > 6 and pxcor < 24 and pycor > -6[ set pcolor white set patch-type "swamp"]
-  if pxcor > 8 and pxcor < 23 and pycor > -7[ set pcolor white set patch-type "swamp"]
-  if pxcor > 10 and pxcor < 22 and pycor > -8[ set pcolor white set patch-type "swamp"]
-  if pxcor > 13 and pxcor < 22 and pycor > -9[ set pcolor white set patch-type "swamp"]
+  if pxcor > -7 and pxcor < 20 and pycor > 20[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > -5 and pxcor < 20 and pycor > 17[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > -3 and pxcor < 25 and pycor > 15[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > -2 and pxcor < 30 and pycor > 12[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > -1 and pxcor < 35 and pycor > 9[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 0 and pxcor < 40 and pycor > 6[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 1 and pxcor < 45 and pycor > 3[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 3 and pxcor < 50 and pycor > 0[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 4 and pxcor < 55 and pycor > -3[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 5 and pxcor < 100 and pycor > -5[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 6 and pxcor < 24 and pycor > -6[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 8 and pxcor < 23 and pycor > -7[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 10 and pxcor < 22 and pycor > -8[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 13 and pxcor < 22 and pycor > -9[ set pcolor 54 set patch-type "swamp"]
 
   ;swamp left
-  if pxcor < -22 and pycor < 17 and pycor > -11[ set pcolor white ]
-  if pxcor < -21 and pycor < 16 and pycor > -11[ set pcolor white ]
-  if pxcor < -20 and pycor < 15 and pycor > -11[ set pcolor white ]
-  if pxcor < -19 and pycor < 14 and pycor > -11[ set pcolor white ]
-  if pxcor < -18 and pycor < 13 and pycor > -11[ set pcolor white ]
-  if pxcor < -17 and pycor < 12 and pycor > 9 [ set pcolor white ]
-  if pxcor < -17 and pycor < 2 and pycor > -11[ set pcolor white ]
-  if pxcor < -16 and pycor < -2 and pycor > -11[ set pcolor white ]
+  if pxcor < -22 and pycor < 17 and pycor > -11[ set pcolor 54 ]
+  if pxcor < -21 and pycor < 16 and pycor > -11[ set pcolor 54 ]
+  if pxcor < -20 and pycor < 15 and pycor > -11[ set pcolor 54 ]
+  if pxcor < -19 and pycor < 14 and pycor > -11[ set pcolor 54 ]
+  if pxcor < -18 and pycor < 13 and pycor > -11[ set pcolor 54 ]
+  if pxcor < -17 and pycor < 12 and pycor > 9 [ set pcolor 54 ]
+  if pxcor < -17 and pycor < 2 and pycor > -11[ set pcolor 54 ]
+  if pxcor < -16 and pycor < -2 and pycor > -11[ set pcolor 54 ]
+end
+
+to setup-water
+  if pxcor > -16 and pxcor <= 100 and pycor = -25 [set pcolor blue set patch-type "water"]
+  if pxcor > -16 and pxcor < 18 and pycor = -24 [set pcolor blue set patch-type "water"]
+  if pxcor > -16 and pxcor < 16 and pycor = -23 [set pcolor blue set patch-type "water"]
+  if pxcor > -15 and pxcor < 14 and pycor = -22 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < 12 and pycor = -21 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < 10 and pycor = -20 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < 8 and pycor = -19 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < 6 and pycor = -18 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < 5 and pycor = -17 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < 4 and pycor = -16 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < 3 and pycor = -15 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < 2 and pycor = -14 [set pcolor blue set patch-type "water"]
+  if pxcor > -15 and pxcor < 1 and pycor = -13 [set pcolor blue set patch-type "water"]
+  if pxcor > -15 and pxcor < 0 and pycor = -12 [set pcolor blue set patch-type "water"]
+  if pxcor > -15 and pxcor < 0 and pycor = -11 [set pcolor blue set patch-type "water"]
+  if pxcor > -15 and pxcor < 0 and pycor = -10 [set pcolor blue set patch-type "water"]
+  if pxcor > -15 and pxcor < -1 and pycor = -9 [set pcolor blue set patch-type "water"]
+  if pxcor > -15 and pxcor < -1 and pycor = -8 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < -1 and pycor = -7 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < -1 and pycor = -6 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < -2 and pycor = -5 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < -2 and pycor = -4 [set pcolor blue set patch-type "water"]
+  if pxcor > -13 and pxcor < -3 and pycor = -3 [set pcolor blue set patch-type "water"]
+  if pxcor > -13 and pxcor < -3 and pycor = -2 [set pcolor blue set patch-type "water"]
+  if pxcor > -13 and pxcor < -3 and pycor = -1 [set pcolor blue set patch-type "water"]
+  if pxcor > -13 and pxcor < -4 and pycor = 0 [set pcolor blue set patch-type "water"]
+  if pxcor > -13 and pxcor < -4 and pycor = 1 [set pcolor blue set patch-type "water"]
+  if pxcor > -13 and pxcor < -4 and pycor = 2 [set pcolor blue set patch-type "water"]
+  if pxcor > -13 and pxcor < -4 and pycor = 3 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < -4 and pycor = 4 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < -5 and pycor = 5 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < -5 and pycor = 6 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < -6 and pycor = 7 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < -6 and pycor = 8 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < -6 and pycor = 9 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < -6 and pycor = 10 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < -6 and pycor = 11 [set pcolor blue set patch-type "water"]
+  if pxcor > -15 and pxcor < -7 and pycor = 12 [set pcolor blue set patch-type "water"]
+  if pxcor > -15 and pxcor < -9 and pycor = 13 [set pcolor blue set patch-type "water"]
+
+  if pxcor > 94 and pxcor <= 100 and pycor = 0 [set pcolor blue set patch-type "water"]
+  if pxcor > 92 and pxcor <= 100 and pycor = -1 [set pcolor blue set patch-type "water"]
+  if pxcor > 92 and pxcor <= 100 and pycor = -2 [set pcolor blue set patch-type "water"]
+  if pxcor > 92 and pxcor <= 100 and pycor = -3 [set pcolor blue set patch-type "water"]
+  if pxcor > 93 and pxcor <= 100 and pycor = -4 [set pcolor blue set patch-type "water"]
+  if pxcor > 93 and pxcor <= 100 and pycor = -5 [set pcolor blue set patch-type "water"]
+  if pxcor > 94 and pxcor <= 100 and pycor = -6 [set pcolor blue set patch-type "water"]
+  if pxcor > 94 and pxcor <= 100 and pycor = -7 [set pcolor blue set patch-type "water"]
+  if pxcor > 95 and pxcor <= 100 and pycor = -8 [set pcolor blue set patch-type "water"]
+  if pxcor > 95 and pxcor <= 100 and pycor = -9 [set pcolor blue set patch-type "water"]
+  if pxcor > 96 and pxcor <= 100 and pycor = -10 [set pcolor blue set patch-type "water"]
+  if pxcor > 96 and pxcor <= 100 and pycor = -11 [set pcolor blue set patch-type "water"]
+  if pxcor > 97 and pxcor <= 100 and pycor = -12 [set pcolor blue set patch-type "water"]
+  if pxcor > 97 and pxcor <= 100 and pycor = -13 [set pcolor blue set patch-type "water"]
 end
 
 to setup-attackers
@@ -110,21 +168,51 @@ to setup-attackers
     set heading 0
     set healthPoints 50
     set accuracy 0.3
-    set attackRange 10
+    set attackRange 3
     set damage 1
     set targetLocationX 0
     set targetLocationY 25
     set moveSpeed 0.01]
  end
 
+to setup-attackers-beach-a
+  create-attackers attacker-number-beach-a [
+    setxy 10 + random-float 5 -22 + random-float 4
+    set color red
+    set heading 0
+    set healthPoints 50
+    set accuracy 0.3
+    set attackRange 3
+    set damage 1
+    set targetLocationX 100
+    set targetLocationY -18
+    set moveSpeed 0.01
+  ]
+end
+
+to setup-attackers-beach-b
+  create-attackers attacker-number-beach-b [
+    setxy -14 + random-float 5 13 + random-float 4
+    set color red
+    set heading 0
+    set healthPoints 50
+    set accuracy 0.3
+    set attackRange 3
+    set damage 1
+    set targetLocationX -24 + random-float 27
+    set targetLocationY 24 - random-float 10
+    set moveSpeed 0.01
+  ]
+end
+
 to setup-defenders
   create-defenders defender-number [
-    setxy random-xcor 25
+    setxy random-xcor 25 + random-float 5
     set color blue
     set heading 180
     set healthPoints 50
     set accuracy 0.3
-    set attackRange 10
+    set attackRange 3
     set damage 1
     set moveSpeed 0.01
   ]
@@ -244,9 +332,9 @@ to move-attackers
       ifelse count attackers in-radius attackRange with [color = 18] >= count attackers in-radius attackRange with [color = red] [
         set heading towardsxy targetLocationX targetLocationY
         set color red
-        set moveSpeed 0.1
-        if pcolor = white
-    [set moveSpeed 0.02]
+        set moveSpeed 0.01
+        if pcolor = 54
+    [set moveSpeed 0.007]
         forward moveSpeed
 
       ]
@@ -271,9 +359,9 @@ to move-attackers
     [
       set heading towardsxy targetLocationX targetLocationY
       set color red
-      set moveSpeed 0.1
-        if pcolor = white
-    [set moveSpeed 0.02]
+      set moveSpeed 0.01
+        if pcolor = 54
+    [set moveSpeed 0.007]
 
        ;forward moveSwampSpeed
       forward moveSpeed
@@ -303,9 +391,9 @@ to move-defenders
     [
       set heading towards min-one-of attackers [distance myself]
       set color blue
-      set moveSpeed 0.1
-        if pcolor = white
-    [set moveSpeed 0.02]
+      set moveSpeed 0.01
+        if pcolor = 54
+    [set moveSpeed 0.007]
       forward moveSpeed
     ]
   ]
@@ -584,8 +672,8 @@ end
 GRAPHICS-WINDOW
 219
 10
-639
-431
+1242
+470
 -1
 -1
 8.08
@@ -599,9 +687,9 @@ GRAPHICS-WINDOW
 0
 1
 -25
-25
+100
 -25
-25
+30
 1
 1
 1
@@ -692,7 +780,7 @@ defender-number
 defender-number
 0
 500
-200.0
+500.0
 1
 1
 NIL
@@ -714,10 +802,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-215
-442
-417
-475
+213
+473
+415
+506
 initial-number-defending-b26
 initial-number-defending-b26
 0
@@ -741,26 +829,11 @@ show-health
 
 SLIDER
 432
-443
+477
 605
-476
+510
 initial-number-seaFury
 initial-number-seaFury
-0
-10
-0.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-216
-486
-416
-519
-initial-number-t33
-initial-number-t33
 0
 10
 0.0
@@ -771,14 +844,59 @@ HORIZONTAL
 
 SLIDER
 212
-528
-417
+519
+412
+552
+initial-number-t33
+initial-number-t33
+0
+10
+0.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+208
 561
+413
+594
 initial-number-attacking-b26
 initial-number-attacking-b26
 0
 20
-2.0
+8.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+431
+519
+647
+552
+attacker-number-beach-a
+attacker-number-beach-a
+0
+100
+70.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+433
+564
+650
+597
+attacker-number-beach-b
+attacker-number-beach-b
+0
+100
+30.0
 1
 1
 NIL
