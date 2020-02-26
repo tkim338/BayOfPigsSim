@@ -261,7 +261,7 @@ to setup-allB26
     setxy random-xcor 25
     set healthPoints 100
     set shape "airplane"
-    set resupplyX 0
+    set resupplyX 50
     set resupplyY 30
     set bombCount 12
     set moveSpeed 0.2
@@ -294,7 +294,7 @@ to setup-allT33
     set bombCount 2
     set bombDamage 2
     set moveSpeed 0.2
-    set resupplyX 0
+    set resupplyX 50
     set resupplyY 30
     set machineGunAmmo 1000
     set machineGunDamage t33_machineGunDamage
@@ -328,7 +328,7 @@ to setup-allSeaFury
     set machineGunAmmo 1000
     set machineGunDamage seaFury_machineGunDamage
     set supplyDelay 0
-    set resupplyX 0
+    set resupplyX 50
     set resupplyY 30
   ]
 end
@@ -444,8 +444,10 @@ to move-allB26
             set supporting 0
             ifelse farTarget != nobody [
               set heading towards farTarget
+              set color red + 1
             ]
             [
+              set color red
               rt random 5
               lt random 5
             ]
@@ -509,72 +511,105 @@ to move-allB26
   ]
 
   ask allDefendingB26 [
-    let potentialTargets attackers in-cone attackRange 30
-    let farTarget max-one-of potentialTargets [distance myself]
-    if bombCount >= 0 [
-      let closeTargets attackers in-radius bombRadius
-      ask closeTargets [ set healthPoints healthPoints - b26_bombDamage ]
-      if count closeTargets > 0 [ set bombCount (bombCount - 1) ]
-    ]
-    if rocketCount >= 0 [
-      let finalTarget one-of potentialTargets
-      if finalTarget != nobody [
-        ask finalTarget [
-          let nearbyTargets attackers in-radius b26_rocketRadius
-          ask nearbyTargets [
-            set healthPoints healthPoints - b26_rocketDamage
+    ifelse supplyDelay = 0 [
+
+      ifelse bombCount > 0 or rocketCount > 0 or machineGunAmmo > 0 [
+
+        let potentialTargets attackers in-cone attackRange 30
+        let farTarget max-one-of potentialTargets [distance myself]
+        if bombCount >= 0 [
+          let closeTargets attackers in-radius bombRadius
+          ask closeTargets [ set healthPoints healthPoints - b26_bombDamage ]
+          if count closeTargets > 0 [ set bombCount (bombCount - 1) ]
+        ]
+        if rocketCount >= 0 [
+          let finalTarget one-of potentialTargets
+          if finalTarget != nobody [
+            ask finalTarget [
+              let nearbyTargets attackers in-radius b26_rocketRadius
+              ask nearbyTargets [
+                set healthPoints healthPoints - b26_rocketDamage
+              ]
+            ]
+            set rocketCount (rocketCount - 1)
           ]
         ]
-        set rocketCount (rocketCount - 1)
-      ]
-    ]
-    if machineGunAmmo >= 0 [
-      ask potentialTargets [ set healthPoints healthPoints - b26_machineGunDamage ]
-      set machineGunAmmo (machineGunAmmo - count potentialTargets)
-    ]
-    if bombCount <= 0 and rocketCount <= 0 and machineGunAmmo <= 0 [
-      set heading towardsxy resupplyX resupplyY
-    ]
+        if machineGunAmmo >= 0 [
+          ask potentialTargets [ set healthPoints healthPoints - b26_machineGunDamage ]
+          set machineGunAmmo (machineGunAmmo - count potentialTargets)
+        ]
 
-    ifelse supporting = 1 [
-      ifelse target != nobody and member? target potentialTargets [
-        set heading towards target
-      ]
-      [
-        set supporting 0
-        ifelse farTarget != nobody [
-          set heading towards farTarget
-          set color blue + 1
+        ifelse supporting = 1 [
+          ifelse target != nobody and member? target potentialTargets [
+            set heading towards target
+          ]
+          [
+            set supporting 0
+            ifelse farTarget != nobody [
+              set heading towards farTarget
+              set color blue + 1
+            ]
+            [
+              set color blue
+              rt random 5
+              lt random 5
+            ]
+          ]
         ]
         [
-          set color blue
-          rt random 5
-          lt random 5
+          ifelse farTarget != nobody [
+            set heading towards farTarget
+            set color blue + 1
+          ]
+          [
+            set color blue
+            rt random 5
+            lt random 5
+          ]
+        ]
+
+        if xcor >= max-pxcor [ set heading 270 ]
+        if xcor <= min-pxcor [ set heading 90 ]
+        if ycor >= max-pycor [ set heading 180 ]
+        if ycor <= min-pycor [ set heading 0 ]
+        ifelse xcor < max-pxcor and xcor > min-pxcor and ycor > min-pycor and ycor < max-pycor [
+          set resupplying false
+        ]
+        [
+          if resupplying = false [
+            set supplyDelay 50
+            set resupplying true
+          ]
         ]
       ]
-    ]
-    [
-      ifelse farTarget != nobody [
-        set heading towards farTarget
+      [
+        ifelse heading < towardsxy resupplyX resupplyY [
+          rt 5
+        ]
+        [
+          lt 5
+        ]
+        set color cyan + 1
+      ]
+
+      ifelse distancexy resupplyX resupplyY < 2 [
+        set bombCount 0
+        set rocketCount 10
+        set machineGunAmmo 1000
+        if resupplying = false [
+          set supplyDelay 100
+          set resupplying true
+          set heading 180
+        ]
       ]
       [
-        rt random 5
-        lt random 5
+        set resupplying false
       ]
+      fd moveSpeed
     ]
-
-    if xcor >= (max-pxcor - 1) [ set heading 270 ]
-    if xcor <= (min-pxcor + 1) [ set heading 90 ]
-    if ycor >= (max-pycor - 1) [ set heading 180 ]
-    if ycor <= (min-pycor + 1) [ set heading 0 ]
-
-    if distancexy resupplyX resupplyY < 5 [
-      set bombCount 0
-      set rocketCount 10
-      set machineGunAmmo 1000
+    [
+      set supplyDelay supplyDelay - 1
     ]
-
-    fd moveSpeed
   ]
 end
 
@@ -861,7 +896,7 @@ initial-number-defending-b26
 initial-number-defending-b26
 0
 20
-0.0
+9.0
 1
 1
 NIL
