@@ -661,19 +661,22 @@ to move-allSeaFury
 end
 
 to display-labels
-  ifelse show-health = false [
+  if show-health = false and show-ammo = false [
     ask turtles [ set label "" ]
   ]
-  [
+  if show-health = true [
     ask turtles [ set label healthPoints ]
+  ]
+  if show-ammo = true [
+    ask allAttackingB26 [ set label machineGunAmmo ]
   ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
 219
 10
-1242
-470
+1245
+471
 -1
 -1
 8.08
@@ -753,10 +756,10 @@ count attackers
 11
 
 PLOT
-9
-247
-209
-397
+8
+277
+208
+427
 Totals
 time
 totals
@@ -901,6 +904,17 @@ attacker-number-beach-b
 1
 NIL
 HORIZONTAL
+
+SWITCH
+16
+223
+150
+256
+show-ammo
+show-ammo
+1
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?
