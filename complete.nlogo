@@ -446,8 +446,10 @@ to move-allB26
     [
       ifelse farTarget != nobody [
         set heading towards farTarget
+        set color red + 1
       ]
       [
+        set color red
         rt random 15
         lt random 15
       ]
@@ -502,8 +504,10 @@ to move-allB26
         set supporting 0
         ifelse farTarget != nobody [
           set heading towards farTarget
+          set color blue + 1
         ]
         [
+          set color blue
           rt random 15
           lt random 15
         ]
@@ -560,8 +564,10 @@ to move-allT33
         set supporting 0
         ifelse farTarget != nobody [
           set heading towards farTarget
+          set color blue + 1
         ]
         [
+          set color blue
           rt random 15
           lt random 15
         ]
@@ -628,8 +634,10 @@ to move-allSeaFury
         set supporting 0
         ifelse farTarget != nobody [
           set heading towards farTarget
+          set color blue + 1
         ]
         [
+          set color blue
           rt random 15
           lt random 15
         ]
@@ -912,7 +920,7 @@ SWITCH
 256
 show-ammo
 show-ammo
-1
+0
 1
 -1000
 
