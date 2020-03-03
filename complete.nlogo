@@ -302,6 +302,7 @@ to setup-allB26
     set supporting 0
     set supplyDelay 0
     set heading 0
+    set healthPoints 1000
   ]
   create-allDefendingB26 initial-number-defending-b26 [
     set color blue - 1
@@ -323,6 +324,7 @@ to setup-allB26
     set machineGunDamage b26_machineGunDamage
     set supplyDelay 0
     set heading 180
+    set healthPoints 1000
   ]
 end
 
@@ -352,6 +354,7 @@ to setup-allT33
     set machineGunDamage t33_machineGunDamage
     set supplyDelay 0
     set heading 180
+    set healthPoints 200
   ]
 end
 
@@ -384,6 +387,7 @@ to setup-allSeaFury
     set resupplyX 50
     set resupplyY 30
     set heading 180
+    set healthPoints 500
   ]
 end
 
@@ -485,9 +489,21 @@ to move-allB26
             set rocketCount (rocketCount - 1)
           ]
         ]
+
+        let allT33Ahead allT33 in-cone attackRange 330
+        let allSeaFuryAhead allSeaFury in-cone attackRange 330
+        let allDefendingB26Ahead allDefendingB26 in-cone attackRange 330
+
+        let allT33Behind (allT33 in-radius attackRange) with [not member? self allT33Ahead]
+        let allSeaFuryBehind (allSeaFury in-radius attackRange) with [not member? self allSeaFuryAhead]
+        let allDefendingB26Behind (allDefendingB26 in-radius attackRange) with [not member? self allDefendingB26Ahead]
+
+        let behindTargets (turtle-set (turtle-set allT33Behind allSeaFuryBehind) allDefendingB26Behind)
+
         if machineGunAmmo >= 0 [
           ask potentialTargets [ set healthPoints healthPoints - b26_machineGunDamage ]
-          set machineGunAmmo (machineGunAmmo - count potentialTargets)
+          ask behindTargets [ set healthPoints healthPoints - b26_machineGunDamage ]
+          set machineGunAmmo (machineGunAmmo - count potentialTargets - count behindTargets)
         ]
 
         ifelse supporting = 1 [
@@ -569,7 +585,7 @@ to move-allB26
       set color blue
       ifelse bombCount > 0 or rocketCount > 0 or machineGunAmmo > 0 [
 
-        let potentialTargets attackers in-cone attackRange 30
+        let potentialTargets (turtle-set (attackers in-cone attackRange 30) (allAttackingB26 in-cone attackRange 30) )
         let farTarget max-one-of potentialTargets [distance myself]
         if bombCount >= 0 [
           let closeTargets attackers in-radius bombRadius
@@ -673,7 +689,7 @@ to move-allT33
       set color blue
       ifelse bombCount > 0 or machineGunAmmo > 0 [
 
-        let potentialTargets attackers in-cone attackRange 30
+        let potentialTargets (turtle-set (attackers in-cone attackRange 30) (allAttackingB26 in-cone attackRange 30) )
         let farTarget max-one-of potentialTargets [distance myself]
         if bombCount >= 0 [
           let closeTargets attackers in-radius bombRadius
@@ -765,7 +781,8 @@ to move-allSeaFury
     ifelse supplyDelay = 0 [
       set color blue
       ifelse bombCount > 0 or rocketCount > 0 or machineGunAmmo > 0 [
-        let potentialTargets attackers in-cone attackRange 30
+
+        let potentialTargets (turtle-set (attackers in-cone attackRange 30) (allAttackingB26 in-cone attackRange 30) )
         let farTarget max-one-of potentialTargets [distance myself]
         if bombCount >= 0 [
           let closeTargets defenders in-radius bombRadius
@@ -1027,7 +1044,7 @@ SWITCH
 208
 show-health
 show-health
-1
+0
 1
 -1000
 
@@ -1113,7 +1130,7 @@ SWITCH
 256
 show-ammo
 show-ammo
-0
+1
 1
 -1000
 
