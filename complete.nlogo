@@ -43,6 +43,8 @@ end
 to setup
   clear-all
 
+  import-drawing "./new_map.png"
+
   setup-patches
   ask patches [setup-swamp setup-water]
   setup-attackers-beach-a
@@ -501,7 +503,11 @@ to move-allB26
         let behindTargets (turtle-set (turtle-set allT33Behind allSeaFuryBehind) allDefendingB26Behind)
 
         if machineGunAmmo >= 0 [
-          ask potentialTargets [ set healthPoints healthPoints - b26_machineGunDamage ]
+          ask potentialTargets [
+            let currentPatch [patch-type] of patch-here
+            ifelse currentPatch = "swamp" [set healthPoints healthPoints - (0.5 * b26_machineGunDamage) ]
+            [ set healthPoints healthPoints - b26_machineGunDamage ]
+          ]
           ask behindTargets [ set healthPoints healthPoints - b26_machineGunDamage ]
           set machineGunAmmo (machineGunAmmo - count potentialTargets - count behindTargets)
         ]
@@ -605,7 +611,11 @@ to move-allB26
           ]
         ]
         if machineGunAmmo >= 0 [
-          ask potentialTargets [ set healthPoints healthPoints - b26_machineGunDamage ]
+          ask potentialTargets [
+            let currentPatch [patch-type] of patch-here
+            ifelse currentPatch = "swamp" [set healthPoints healthPoints - (0.5 * b26_machineGunDamage) ]
+            [ set healthPoints healthPoints - b26_machineGunDamage ]
+          ]
           set machineGunAmmo (machineGunAmmo - count potentialTargets)
         ]
 
@@ -697,7 +707,11 @@ to move-allT33
           if count closeTargets > 0 [ set bombCount (bombCount - 1) ]
         ]
         if machineGunAmmo >= 0 [
-          ask potentialTargets [ set healthPoints healthPoints - t33_machineGunDamage ]
+          ask potentialTargets [
+           let currentPatch [patch-type] of patch-here
+            ifelse currentPatch = "swamp" [set healthPoints healthPoints - (0.5 * t33_machineGunDamage) ]
+            [ set healthPoints healthPoints - t33_machineGunDamage ]
+          ]
           set machineGunAmmo (machineGunAmmo - count potentialTargets)
         ]
 
@@ -802,7 +816,11 @@ to move-allSeaFury
           ]
         ]
         if machineGunAmmo >= 0 [
-          ask potentialTargets [ set healthPoints healthPoints - seaFury_machineGunDamage ]
+          ask potentialTargets [
+            let currentPatch [patch-type] of patch-here
+            ifelse currentPatch = "swamp" [set healthPoints healthPoints - (0.5 * seaFury_machineGunDamage) ]
+            [ set healthPoints healthPoints - seaFury_machineGunDamage ]
+          ]
           set machineGunAmmo (machineGunAmmo - count potentialTargets)
         ]
 
@@ -1044,7 +1062,7 @@ SWITCH
 208
 show-health
 show-health
-0
+1
 1
 -1000
 
