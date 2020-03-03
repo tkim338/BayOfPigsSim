@@ -2,6 +2,7 @@ globals [
   b26_bombDamage b26_machineGunDamage b26_rocketDamage b26_rocketRadius
   t33_machineGunDamage t33_bombDamage
   seaFury_machineGunDamage seaFury_bombDamage seaFury_rocketDamage seaFury_rocketRadius
+  patch-type moveSwampSpeed
 ]
 
 breed [attackers attacker] ; these are ground troops
@@ -13,13 +14,14 @@ breed [ allT33 t33 ]
 
 turtles-own [ healthPoints accuracy attackRange damage moveSpeed turnAngle sightRange supporting target]
 attackers-own [targetLocationX targetLocationY]
-allAttackingB26-own [ bombRadius bombDamage bombCount rocketRadius rocketRange rocketDamage rocketCount machineGunRange machineGunDamage machineGunAmmo resupplyX resupplyY ]
-allDefendingB26-own [ bombRadius bombDamage bombCount rocketRadius rocketRange rocketDamage rocketCount machineGunRange machineGunDamage machineGunAmmo resupplyX resupplyY ]
-allSeaFury-own [ bombRadius bombDamage bombCount rocketRange rocketDamage rocketRadius rocketCount machineGunRange machineGunDamage machineGunAmmo resupplyX resupplyY ]
-allT33-own [ bombRadius bombDamage bombCount machineGunRange machineGunDamage machineGunAmmo resupplyX resupplyY]
+allAttackingB26-own [ bombRadius bombDamage bombCount rocketRadius rocketRange rocketDamage rocketCount machineGunRange machineGunDamage machineGunAmmo resupplyX resupplyY supplyDelay resupplying ]
+allDefendingB26-own [ bombRadius bombDamage bombCount rocketRadius rocketRange rocketDamage rocketCount machineGunRange machineGunDamage machineGunAmmo resupplyX resupplyY supplyDelay resupplying ]
+allSeaFury-own [ bombRadius bombDamage bombCount rocketRange rocketDamage rocketRadius rocketCount machineGunRange machineGunDamage machineGunAmmo resupplyX resupplyY supplyDelay resupplying ]
+allT33-own [ bombRadius bombDamage bombCount machineGunRange machineGunDamage machineGunAmmo resupplyX resupplyY supplyDelay resupplying ]
+
 
 to go
-  if ticks >= 5000 [ stop ]
+  if ticks >= 20000 [ stop ]
   if count attackers = 0 [ stop ]
   if count defenders = 0 [ stop ]
   move-attackers
@@ -40,9 +42,11 @@ end
 
 to setup
   clear-all
-  import-drawing "./bay_map.png"
+
   setup-patches
-  setup-attackers
+  ask patches [setup-swamp setup-water]
+  setup-attackers-beach-a
+  setup-attackers-beach-b
   setup-defenders
 
   setup-allB26
@@ -65,6 +69,148 @@ to setup
   reset-ticks
 end
 
+to setup-patches ;; patch procedure
+  ask patches [ set pcolor green ]
+
+   ;import-drawing "bay_map.png"
+
+end
+
+to setup-swamp
+  ;swamp top left up the road
+   if pxcor > -7 and pxcor < 24 and pycor > 25[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > -7 and pxcor < 27 and pycor > 23 and pycor < 26[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > -5 and pxcor < 30 and pycor > 20 and pycor < 24[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > -3 and pxcor < 33 and pycor > 18 and pycor < 21[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > -2 and pxcor < 35 and pycor > 15 and pycor < 19[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > -1 and pxcor < 37 and pycor > 12 and pycor < 16[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 0 and pxcor < 39 and pycor > 11 and pycor < 13[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 0 and pxcor < 41 and pycor > 10 and pycor < 12[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 0 and pxcor < 43 and pycor > 9 and pycor < 11[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 1 and pxcor < 44 and pycor > 6 and pycor < 10[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 2 and pxcor < 45 and pycor > 5 and pycor < 7[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 3 and pxcor < 46 and pycor > 4 and pycor < 6[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 4 and pxcor < 46 and pycor > 2 and pycor < 5[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 5 and pxcor < 45 and pycor > 2 and pycor < 4[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 6 and pxcor < 45 and pycor > 1 and pycor < 3[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 7 and pxcor < 45 and pycor > 0 and pycor < 2[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 8 and pxcor < 45 and pycor > -1 and pycor < 2[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 9 and pxcor < 44 and pycor > -2 and pycor < 1[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 11 and pxcor < 24 and pycor > -3 and pycor < -1[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 13 and pxcor < 23 and pycor > -4 and pycor < -2[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 15 and pxcor < 22 and pycor > -5 and pycor < -3[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 17 and pxcor < 21 and pycor > -6 and pycor < -4[ set pcolor 54 set patch-type "swamp"]
+   if pxcor > 25 and pxcor < 35 and pycor > -3 and pycor < -1[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 26 and pxcor < 34 and pycor > -4 and pycor < -2[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 27 and pxcor < 33 and pycor > -5 and pycor < -3[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 28 and pxcor < 32 and pycor > -6 and pycor < -4[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 29 and pxcor < 31 and pycor > -7 and pycor < -5[ set pcolor 54 set patch-type "swamp"]
+   if pxcor > 36 and pxcor < 44 and pycor > -3 and pycor < -1[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 37 and pxcor < 43 and pycor > -4 and pycor < -2[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 38 and pxcor < 43 and pycor > -5 and pycor < -3[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 39 and pxcor < 42 and pycor > -6 and pycor < -4[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 40 and pxcor < 42 and pycor > -7 and pycor < -5[ set pcolor 54 set patch-type "swamp"]
+
+  ; swamp bottom right down the road
+  if pxcor > 47 and pxcor < 49 and pycor > 3 and pycor < 5[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 47 and pxcor < 50 and pycor > 2 and pycor < 4[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 46 and pxcor < 51 and pycor > 1 and pycor < 3[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 46 and pxcor < 52 and pycor > 0 and pycor < 2[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 45 and pxcor < 53 and pycor > -1 and pycor < 1[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 45 and pxcor < 54 and pycor > -3 and pycor < 0[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 44 and pxcor < 55 and pycor > -4 and pycor < -2[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 44 and pxcor < 57 and pycor > -5 and pycor < -3[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 43 and pxcor < 58 and pycor > -6 and pycor < -4[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 43 and pxcor < 59 and pycor > -7 and pycor < -5[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 44 and pxcor < 71 and pycor > -8 and pycor < -6[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 45 and pxcor < 71 and pycor > -9 and pycor < -7[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 46 and pxcor < 71 and pycor > -10 and pycor < -8[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 47 and pxcor < 72 and pycor > -11 and pycor < -9[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 48 and pxcor < 73 and pycor > -12 and pycor < -10[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 49 and pxcor < 73 and pycor > -13 and pycor < -11[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 74 and pxcor < 76 and pycor > -13 and pycor < -11[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 50 and pxcor < 79 and pycor > -15 and pycor < -12[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 49 and pxcor < 78 and pycor > -16 and pycor < -14[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 50 and pxcor < 77 and pycor > -17 and pycor < -15[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 51 and pxcor < 76 and pycor > -18 and pycor < -16[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 52 and pxcor < 75 and pycor > -19 and pycor < -17[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 53 and pxcor < 70 and pycor > -20 and pycor < -18[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 70 and pxcor < 74 and pycor > -20 and pycor < -18[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 71 and pxcor < 73 and pycor > -21 and pycor < -19[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 55 and pxcor < 69 and pycor > -21 and pycor < -19[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 57 and pxcor < 68 and pycor > -22 and pycor < -20[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 59 and pxcor < 67 and pycor > -23 and pycor < -21[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 61 and pxcor < 66 and pycor > -24 and pycor < -22[ set pcolor 54 set patch-type "swamp"]
+  if pxcor > 62 and pxcor < 65 and pycor > -25 and pycor < -23[ set pcolor 54 set patch-type "swamp"]
+
+  ;swamp all left
+  if pxcor < -22 and pycor < 17 and pycor > -11[ set pcolor 54 ]
+  if pxcor < -21 and pycor < 16 and pycor > -11[ set pcolor 54 ]
+  if pxcor < -20 and pycor < 15 and pycor > -11[ set pcolor 54 ]
+  if pxcor < -19 and pycor < 14 and pycor > -11[ set pcolor 54 ]
+  if pxcor < -18 and pycor < 13 and pycor > -11[ set pcolor 54 ]
+  if pxcor < -17 and pycor < 12 and pycor > 9 [ set pcolor 54 ]
+  if pxcor < -17 and pycor < 2 and pycor > -11[ set pcolor 54 ]
+  if pxcor < -16 and pycor < -2 and pycor > -11[ set pcolor 54 ]
+end
+
+to setup-water
+  if pxcor > -16 and pxcor <= 100 and pycor = -25 [set pcolor blue set patch-type "water"]
+  if pxcor > -16 and pxcor < 18 and pycor = -24 [set pcolor blue set patch-type "water"]
+  if pxcor > -16 and pxcor < 16 and pycor = -23 [set pcolor blue set patch-type "water"]
+  if pxcor > -15 and pxcor < 14 and pycor = -22 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < 12 and pycor = -21 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < 10 and pycor = -20 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < 8 and pycor = -19 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < 6 and pycor = -18 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < 5 and pycor = -17 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < 4 and pycor = -16 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < 3 and pycor = -15 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < 2 and pycor = -14 [set pcolor blue set patch-type "water"]
+  if pxcor > -15 and pxcor < 1 and pycor = -13 [set pcolor blue set patch-type "water"]
+  if pxcor > -15 and pxcor < 0 and pycor = -12 [set pcolor blue set patch-type "water"]
+  if pxcor > -15 and pxcor < 0 and pycor = -11 [set pcolor blue set patch-type "water"]
+  if pxcor > -15 and pxcor < 0 and pycor = -10 [set pcolor blue set patch-type "water"]
+  if pxcor > -15 and pxcor < -1 and pycor = -9 [set pcolor blue set patch-type "water"]
+  if pxcor > -15 and pxcor < -1 and pycor = -8 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < -1 and pycor = -7 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < -1 and pycor = -6 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < -2 and pycor = -5 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < -2 and pycor = -4 [set pcolor blue set patch-type "water"]
+  if pxcor > -13 and pxcor < -3 and pycor = -3 [set pcolor blue set patch-type "water"]
+  if pxcor > -13 and pxcor < -3 and pycor = -2 [set pcolor blue set patch-type "water"]
+  if pxcor > -13 and pxcor < -3 and pycor = -1 [set pcolor blue set patch-type "water"]
+  if pxcor > -13 and pxcor < -4 and pycor = 0 [set pcolor blue set patch-type "water"]
+  if pxcor > -13 and pxcor < -4 and pycor = 1 [set pcolor blue set patch-type "water"]
+  if pxcor > -13 and pxcor < -4 and pycor = 2 [set pcolor blue set patch-type "water"]
+  if pxcor > -13 and pxcor < -4 and pycor = 3 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < -4 and pycor = 4 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < -5 and pycor = 5 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < -5 and pycor = 6 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < -6 and pycor = 7 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < -6 and pycor = 8 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < -6 and pycor = 9 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < -6 and pycor = 10 [set pcolor blue set patch-type "water"]
+  if pxcor > -14 and pxcor < -6 and pycor = 11 [set pcolor blue set patch-type "water"]
+  if pxcor > -15 and pxcor < -7 and pycor = 12 [set pcolor blue set patch-type "water"]
+  if pxcor > -15 and pxcor < -9 and pycor = 13 [set pcolor blue set patch-type "water"]
+
+  if pxcor > 94 and pxcor <= 100 and pycor = 0 [set pcolor blue set patch-type "water"]
+  if pxcor > 92 and pxcor <= 100 and pycor = -1 [set pcolor blue set patch-type "water"]
+  if pxcor > 92 and pxcor <= 100 and pycor = -2 [set pcolor blue set patch-type "water"]
+  if pxcor > 92 and pxcor <= 100 and pycor = -3 [set pcolor blue set patch-type "water"]
+  if pxcor > 93 and pxcor <= 100 and pycor = -4 [set pcolor blue set patch-type "water"]
+  if pxcor > 93 and pxcor <= 100 and pycor = -5 [set pcolor blue set patch-type "water"]
+  if pxcor > 94 and pxcor <= 100 and pycor = -6 [set pcolor blue set patch-type "water"]
+  if pxcor > 94 and pxcor <= 100 and pycor = -7 [set pcolor blue set patch-type "water"]
+  if pxcor > 95 and pxcor <= 100 and pycor = -8 [set pcolor blue set patch-type "water"]
+  if pxcor > 95 and pxcor <= 100 and pycor = -9 [set pcolor blue set patch-type "water"]
+  if pxcor > 96 and pxcor <= 100 and pycor = -10 [set pcolor blue set patch-type "water"]
+  if pxcor > 96 and pxcor <= 100 and pycor = -11 [set pcolor blue set patch-type "water"]
+  if pxcor > 97 and pxcor <= 100 and pycor = -12 [set pcolor blue set patch-type "water"]
+  if pxcor > 97 and pxcor <= 100 and pycor = -13 [set pcolor blue set patch-type "water"]
+end
+
 to setup-attackers
   create-attackers attacker-number [
     setxy random-xcor -25
@@ -72,22 +218,52 @@ to setup-attackers
     set heading 0
     set healthPoints 50
     set accuracy 0.3
-    set attackRange 10
+    set attackRange 3
     set damage 1
     set targetLocationX 0
     set targetLocationY 25
+    set moveSpeed 0.01
+  ]
+ end
+
+to setup-attackers-beach-a
+  create-attackers attacker-number-beach-a [
+    setxy 10 + random-float 5 -22 + random-float 4
+    set color red
+    set heading 0
+    set healthPoints 50
+    set accuracy 0.3
+    set attackRange 3
+    set damage 1
+    set targetLocationX 100
+    set targetLocationY -18
+    set moveSpeed 0.01
+  ]
+end
+
+to setup-attackers-beach-b
+  create-attackers attacker-number-beach-b [
+    setxy -14 + random-float 5 13 + random-float 4
+    set color red
+    set heading 0
+    set healthPoints 50
+    set accuracy 0.3
+    set attackRange 3
+    set damage 1
+    set targetLocationX -24 + random-float 27
+    set targetLocationY 24 - random-float 10
     set moveSpeed 0.01
   ]
 end
 
 to setup-defenders
   create-defenders defender-number [
-    setxy random-xcor 25
+    setxy random-xcor 25 + random-float 5
     set color blue
     set heading 180
     set healthPoints 50
     set accuracy 0.3
-    set attackRange 10
+    set attackRange 3
     set damage 1
     set moveSpeed 0.01
   ]
@@ -124,6 +300,8 @@ to setup-allB26
     set machineGunAmmo 1000
     set machineGunDamage b26_machineGunDamage
     set supporting 0
+    set supplyDelay 0
+    set heading 0
   ]
   create-allDefendingB26 initial-number-defending-b26 [
     set color blue - 1
@@ -134,8 +312,8 @@ to setup-allB26
     setxy random-xcor 25
     set healthPoints 100
     set shape "airplane"
-    set resupplyX 0
-    set resupplyY -25
+    set resupplyX 50
+    set resupplyY 30
     set bombCount 12
     set moveSpeed 0.2
     set rocketCount 10
@@ -143,6 +321,8 @@ to setup-allB26
     set bombDamage b26_bombDamage
     set machineGunAmmo 1000
     set machineGunDamage b26_machineGunDamage
+    set supplyDelay 0
+    set heading 180
   ]
 end
 
@@ -166,10 +346,12 @@ to setup-allT33
     set bombCount 2
     set bombDamage 2
     set moveSpeed 0.2
-    set resupplyX 0
-    set resupplyY 25
+    set resupplyX 50
+    set resupplyY 30
     set machineGunAmmo 1000
     set machineGunDamage t33_machineGunDamage
+    set supplyDelay 0
+    set heading 180
   ]
 end
 
@@ -198,6 +380,10 @@ to setup-allSeaFury
     set bombDamage seaFury_bombDamage
     set machineGunAmmo 1000
     set machineGunDamage seaFury_machineGunDamage
+    set supplyDelay 0
+    set resupplyX 50
+    set resupplyY 30
+    set heading 180
   ]
 end
 
@@ -207,7 +393,11 @@ to move-attackers
       ifelse count attackers in-radius attackRange with [color = 18] >= count attackers in-radius attackRange with [color = red] [
         set heading towardsxy targetLocationX targetLocationY
         set color red
-        forward 0.1
+        set moveSpeed 0.01
+        if pcolor = 54
+    [set moveSpeed 0.007]
+        forward moveSpeed
+
       ]
       [
         set color 18
@@ -230,6 +420,11 @@ to move-attackers
     [
       set heading towardsxy targetLocationX targetLocationY
       set color red
+      set moveSpeed 0.01
+        if pcolor = 54
+    [set moveSpeed 0.007]
+
+       ;forward moveSwampSpeed
       forward moveSpeed
     ]
   ]
@@ -257,6 +452,9 @@ to move-defenders
     [
       set heading towards min-one-of attackers [distance myself]
       set color blue
+      set moveSpeed 0.01
+        if pcolor = 54
+    [set moveSpeed 0.007]
       forward moveSpeed
     ]
   ]
@@ -264,286 +462,425 @@ end
 
 to move-allB26
   ask allAttackingB26 [
-    let potentialTargets defenders in-cone attackRange 30
-    let farTarget max-one-of potentialTargets [distance myself]
-    if bombCount >= 0 [
-      let closeTargets defenders in-radius bombRadius
-      ask closeTargets [ set healthPoints healthPoints - b26_bombDamage ]
-      if count closeTargets > 0 [ set bombCount (bombCount - 1) ]
-    ]
-    if rocketCount >= 0 [
-      let finalTarget one-of potentialTargets
-      if finalTarget != nobody [
-        ask finalTarget [
-          let nearbyTargets defenders in-radius b26_rocketRadius
-          ask nearbyTargets [
-            set healthPoints healthPoints - b26_rocketDamage
+    ifelse supplyDelay = 0 [
+      set color red
+      ifelse bombCount > 0 or rocketCount > 0 or machineGunAmmo > 0 [
+
+        let potentialTargets defenders in-cone attackRange 30
+        let farTarget max-one-of potentialTargets [distance myself]
+        if bombCount >= 0 [
+          let closeTargets defenders in-radius bombRadius
+          ask closeTargets [ set healthPoints healthPoints - b26_bombDamage ]
+          if count closeTargets > 0 [ set bombCount (bombCount - 1) ]
+        ]
+        if rocketCount >= 0 [
+          let finalTarget one-of potentialTargets
+          if finalTarget != nobody [
+            ask finalTarget [
+              let nearbyTargets defenders in-radius b26_rocketRadius
+              ask nearbyTargets [
+                set healthPoints healthPoints - b26_rocketDamage
+              ]
+            ]
+            set rocketCount (rocketCount - 1)
           ]
         ]
-        set rocketCount (rocketCount - 1)
-      ]
-    ]
-    if machineGunAmmo >= 0 [
-      ask potentialTargets [ set healthPoints healthPoints - b26_machineGunDamage ]
-      set machineGunAmmo (machineGunAmmo - count potentialTargets)
-    ]
-    if bombCount <= 0 and rocketCount <= 0 and machineGunAmmo <= 0 [
-      set heading towardsxy resupplyX resupplyY
-    ]
+        if machineGunAmmo >= 0 [
+          ask potentialTargets [ set healthPoints healthPoints - b26_machineGunDamage ]
+          set machineGunAmmo (machineGunAmmo - count potentialTargets)
+        ]
 
-    ifelse supporting = 1 [
-      ifelse target != nobody and member? target potentialTargets [
-        set heading towards target
-      ]
-      [
-        set supporting 0
-        ifelse farTarget != nobody [
-          set heading towards farTarget
+        ifelse supporting = 1 [
+          ifelse target != nobody [;and member? target potentialTargets [
+            set heading towards target
+          ]
+          [
+            set supporting 0
+            ifelse farTarget != nobody [
+              set heading towards farTarget
+              set color red + 1
+            ]
+            [
+              set color red
+              rt random 5
+              lt random 5
+            ]
+          ]
         ]
         [
-          rt random 15
-          lt random 15
+          ifelse farTarget != nobody [
+            set heading towards farTarget
+            set color red + 1
+          ]
+          [
+            set color red
+            rt random 5
+            lt random 5
+          ]
+        ]
+
+        if xcor >= max-pxcor [ set heading 270 ]
+        if xcor <= min-pxcor [ set heading 90 ]
+        if ycor >= max-pycor [ set heading 180 ]
+        if ycor <= min-pycor [ set heading 0 ]
+        ifelse xcor < max-pxcor and xcor > min-pxcor and ycor > min-pycor and ycor < max-pycor [
+          set resupplying false
+        ]
+        [
+          if resupplying = false [
+            set supplyDelay 20
+            set resupplying true
+          ]
         ]
       ]
-    ]
-    [
-      ifelse farTarget != nobody [
-        set heading towards farTarget
+      [
+
+        ifelse heading < towardsxy resupplyX resupplyY [
+          rt 5
+        ]
+        [
+          lt 5
+        ]
+        set color orange + 1
+      ]
+      ifelse distancexy resupplyX resupplyY < 2 [
+        set bombCount 2
+        set rocketCount 10
+        set machineGunAmmo 1000
+        if resupplying = false [
+          set supplyDelay 100
+          set resupplying true
+          set heading 0
+        ]
       ]
       [
-        rt random 15
-        lt random 15
+        set resupplying false
       ]
+
+      fd moveSpeed
     ]
-
-    if xcor >= (max-pxcor - 1) [ set heading 270 ]
-    if xcor <= (min-pxcor + 1) [ set heading 90 ]
-    if ycor >= (max-pycor - 1) [ set heading 180 ]
-    if ycor <= (min-pycor + 1) [ set heading 0 ]
-
-    if distancexy resupplyX resupplyY < 5 [
-      set bombCount 0
-      set rocketCount 10
-      set machineGunAmmo 1000
+    [
+      set supplyDelay supplyDelay - 1
     ]
-
-    fd moveSpeed
   ]
+
   ask allDefendingB26 [
-    let potentialTargets attackers in-cone attackRange 30
-    let farTarget max-one-of potentialTargets [distance myself]
-    if bombCount >= 0 [
-      let closeTargets attackers in-radius bombRadius
-      ask closeTargets [ set healthPoints healthPoints - b26_bombDamage ]
-      if count closeTargets > 0 [ set bombCount (bombCount - 1) ]
-    ]
-    if rocketCount >= 0 [
-      let finalTarget one-of potentialTargets
-      if finalTarget != nobody [
-        ask finalTarget [
-          let nearbyTargets attackers in-radius b26_rocketRadius
-          ask nearbyTargets [
-            set healthPoints healthPoints - b26_rocketDamage
+    ifelse supplyDelay = 0 [
+      set color blue
+      ifelse bombCount > 0 or rocketCount > 0 or machineGunAmmo > 0 [
+
+        let potentialTargets attackers in-cone attackRange 30
+        let farTarget max-one-of potentialTargets [distance myself]
+        if bombCount >= 0 [
+          let closeTargets attackers in-radius bombRadius
+          ask closeTargets [ set healthPoints healthPoints - b26_bombDamage ]
+          if count closeTargets > 0 [ set bombCount (bombCount - 1) ]
+        ]
+        if rocketCount >= 0 [
+          let finalTarget one-of potentialTargets
+          if finalTarget != nobody [
+            ask finalTarget [
+              let nearbyTargets attackers in-radius b26_rocketRadius
+              ask nearbyTargets [
+                set healthPoints healthPoints - b26_rocketDamage
+              ]
+            ]
+            set rocketCount (rocketCount - 1)
           ]
         ]
-        set rocketCount (rocketCount - 1)
-      ]
-    ]
-    if machineGunAmmo >= 0 [
-      ask potentialTargets [ set healthPoints healthPoints - b26_machineGunDamage ]
-      set machineGunAmmo (machineGunAmmo - count potentialTargets)
-    ]
-    if bombCount <= 0 and rocketCount <= 0 and machineGunAmmo <= 0 [
-      set heading towardsxy resupplyX resupplyY
-    ]
+        if machineGunAmmo >= 0 [
+          ask potentialTargets [ set healthPoints healthPoints - b26_machineGunDamage ]
+          set machineGunAmmo (machineGunAmmo - count potentialTargets)
+        ]
 
-    ifelse supporting = 1 [
-      ifelse target != nobody and member? target potentialTargets [
-        set heading towards target
-      ]
-      [
-        set supporting 0
-        ifelse farTarget != nobody [
-          set heading towards farTarget
+        ifelse supporting = 1 [
+          ifelse target != nobody [;and member? target potentialTargets [
+            set heading towards target
+          ]
+          [
+            set supporting 0
+            ifelse farTarget != nobody [
+              set heading towards farTarget
+              set color blue + 1
+            ]
+            [
+              set color blue
+              rt random 5
+              lt random 5
+            ]
+          ]
         ]
         [
-          rt random 15
-          lt random 15
+          ifelse farTarget != nobody [
+            set heading towards farTarget
+            set color blue + 1
+          ]
+          [
+            set color blue
+            rt random 5
+            lt random 5
+          ]
+        ]
+
+        if xcor >= max-pxcor [ set heading 270 ]
+        if xcor <= min-pxcor [ set heading 90 ]
+        if ycor >= max-pycor [ set heading 180 ]
+        if ycor <= min-pycor [ set heading 0 ]
+        ifelse xcor < max-pxcor and xcor > min-pxcor and ycor > min-pycor and ycor < max-pycor [
+          set resupplying false
+        ]
+        [
+          if resupplying = false [
+            set supplyDelay 20
+            set resupplying true
+          ]
         ]
       ]
-    ]
-    [
-      ifelse farTarget != nobody [
-        set heading towards farTarget
+      [
+        ifelse heading < towardsxy resupplyX resupplyY [
+          rt 5
+        ]
+        [
+          lt 5
+        ]
+        set color cyan + 1
+      ]
+
+      ifelse distancexy resupplyX resupplyY < 2 [
+        set bombCount 2
+        set rocketCount 10
+        set machineGunAmmo 1000
+        if resupplying = false [
+          set supplyDelay 100
+          set resupplying true
+          set heading 180
+        ]
       ]
       [
-        rt random 15
-        lt random 15
+        set resupplying false
       ]
+      fd moveSpeed
     ]
-
-    if xcor >= (max-pxcor - 1) [ set heading 270 ]
-    if xcor <= (min-pxcor + 1) [ set heading 90 ]
-    if ycor >= (max-pycor - 1) [ set heading 180 ]
-    if ycor <= (min-pycor + 1) [ set heading 0 ]
-
-    if distancexy resupplyX resupplyY < 5 [
-      set bombCount 0
-      set rocketCount 10
-      set machineGunAmmo 1000
+    [
+      set supplyDelay supplyDelay - 1
     ]
-
-    fd moveSpeed
   ]
 end
 
 to move-allT33
   ask allT33 [
-    let potentialTargets attackers in-cone attackRange 30
-    let farTarget max-one-of potentialTargets [distance myself]
-    if bombCount >= 0 [
-      let closeTargets attackers in-radius bombRadius
-      ask closeTargets [ set healthPoints healthPoints - t33_bombDamage ]
-      if count closeTargets > 0 [ set bombCount (bombCount - 1) ]
-    ]
-    if machineGunAmmo >= 0 [
-      ask potentialTargets [ set healthPoints healthPoints - t33_machineGunDamage ]
-      set machineGunAmmo (machineGunAmmo - count potentialTargets)
-    ]
+    ifelse supplyDelay = 0 [
+      set color blue
+      ifelse bombCount > 0 or machineGunAmmo > 0 [
 
-    if bombCount <= 0 and machineGunAmmo <= 0 [
-      set heading towardsxy resupplyX resupplyY
-    ]
+        let potentialTargets attackers in-cone attackRange 30
+        let farTarget max-one-of potentialTargets [distance myself]
+        if bombCount >= 0 [
+          let closeTargets attackers in-radius bombRadius
+          ask closeTargets [ set healthPoints healthPoints - t33_bombDamage ]
+          if count closeTargets > 0 [ set bombCount (bombCount - 1) ]
+        ]
+        if machineGunAmmo >= 0 [
+          ask potentialTargets [ set healthPoints healthPoints - t33_machineGunDamage ]
+          set machineGunAmmo (machineGunAmmo - count potentialTargets)
+        ]
 
-    ifelse supporting = 1 [
-      ifelse target != nobody and member? target potentialTargets [
-        set heading towards target
-      ]
-      [
-        set supporting 0
-        ifelse farTarget != nobody [
-          set heading towards farTarget
+        if bombCount <= 0 and machineGunAmmo <= 0 [
+          set heading towardsxy resupplyX resupplyY
+        ]
+
+        ifelse supporting = 1 [
+          ifelse target != nobody [;and member? target potentialTargets [
+            set heading towards target
+          ]
+          [
+            set supporting 0
+            ifelse farTarget != nobody [
+              set heading towards farTarget
+              set color blue + 1
+            ]
+            [
+              set color blue
+              rt random 5
+              lt random 5
+            ]
+          ]
         ]
         [
-          rt random 15
-          lt random 15
+          ifelse farTarget != nobody [
+            set heading towards farTarget
+          ]
+          [
+            rt random 5
+            lt random 5
+          ]
+        ]
+
+        if xcor >= max-pxcor [ set heading 270 ]
+        if xcor <= min-pxcor [ set heading 90 ]
+        if ycor >= max-pycor [ set heading 180 ]
+        if ycor <= min-pycor [ set heading 0 ]
+        ifelse xcor < max-pxcor and xcor > min-pxcor and ycor > min-pycor and ycor < max-pycor [
+          set resupplying false
+        ]
+        [
+          if resupplying = false [
+            set supplyDelay 20
+            set resupplying true
+          ]
         ]
       ]
-    ]
-    [
-      ifelse farTarget != nobody [
-        set heading towards farTarget
+      [
+        ifelse heading < towardsxy resupplyX resupplyY [
+          rt 5
+        ]
+        [
+          lt 5
+        ]
+        set color cyan + 1
+      ]
+
+      ifelse distancexy resupplyX resupplyY < 2 [
+        set bombCount 2
+        set machineGunAmmo 1000
+        if resupplying = false [
+          set supplyDelay 100
+          set resupplying true
+          set heading 180
+        ]
       ]
       [
-        rt random 15
-        lt random 15
+        set resupplying false
       ]
+      fd moveSpeed
     ]
-
-    if xcor >= (max-pxcor - 1) [ set heading 270 ]
-    if xcor <= (min-pxcor + 1) [ set heading 90 ]
-    if ycor >= (max-pycor - 1) [ set heading 180 ]
-    if ycor <= (min-pycor + 1) [ set heading 0 ]
-
-    if distancexy resupplyX resupplyY < 5 [
-      set machineGunAmmo 1000
-      set bombCount 2
+    [
+      set supplyDelay supplyDelay - 1
     ]
-
-    fd moveSpeed
   ]
 end
 
 to move-allSeaFury
   ask allSeaFury [
-    let potentialTargets attackers in-cone attackRange 30
-    let farTarget max-one-of potentialTargets [distance myself]
-    if bombCount >= 0 [
-      let closeTargets defenders in-radius bombRadius
-      ask closeTargets [ set healthPoints healthPoints - seaFury_bombDamage ]
-      if count closeTargets > 0 [ set bombCount (bombCount - 1) ]
-    ]
-    if rocketCount >= 0 [
-      let finalTarget one-of potentialTargets
-      if finalTarget != nobody [
-        ask finalTarget [
-          let nearbyTargets attackers in-radius seaFury_rocketRadius
-          ask nearbyTargets [
-            set healthPoints healthPoints - seaFury_rocketDamage
+    ifelse supplyDelay = 0 [
+      set color blue
+      ifelse bombCount > 0 or rocketCount > 0 or machineGunAmmo > 0 [
+        let potentialTargets attackers in-cone attackRange 30
+        let farTarget max-one-of potentialTargets [distance myself]
+        if bombCount >= 0 [
+          let closeTargets defenders in-radius bombRadius
+          ask closeTargets [ set healthPoints healthPoints - seaFury_bombDamage ]
+          if count closeTargets > 0 [ set bombCount (bombCount - 1) ]
+        ]
+        if rocketCount >= 0 [
+          let finalTarget one-of potentialTargets
+          if finalTarget != nobody [
+            ask finalTarget [
+              let nearbyTargets attackers in-radius seaFury_rocketRadius
+              ask nearbyTargets [
+                set healthPoints healthPoints - seaFury_rocketDamage
+              ]
+            ]
+            set rocketCount (rocketCount - 1)
           ]
         ]
-        set rocketCount (rocketCount - 1)
-      ]
-    ]
-    if machineGunAmmo >= 0 [
-      ask potentialTargets [ set healthPoints healthPoints - seaFury_machineGunDamage ]
-      set machineGunAmmo (machineGunAmmo - count potentialTargets)
-    ]
-    if bombCount <= 0 and rocketCount <= 0 and machineGunAmmo <= 0 [
-      set heading towardsxy resupplyX resupplyY
-    ]
+        if machineGunAmmo >= 0 [
+          ask potentialTargets [ set healthPoints healthPoints - seaFury_machineGunDamage ]
+          set machineGunAmmo (machineGunAmmo - count potentialTargets)
+        ]
 
-    ifelse supporting = 1 [
-      ifelse target != nobody and member? target potentialTargets [
-        set heading towards target
-      ]
-      [
-        set supporting 0
-        ifelse farTarget != nobody [
-          set heading towards farTarget
+        ifelse supporting = 1 [
+          ifelse target != nobody [;and member? target potentialTargets [
+            set heading towards target
+          ]
+          [
+            set supporting 0
+            ifelse farTarget != nobody [
+              set heading towards farTarget
+              set color blue + 1
+            ]
+            [
+              set color blue
+              rt random 5
+              lt random 5
+            ]
+          ]
         ]
         [
-          rt random 15
-          lt random 15
+          ifelse farTarget != nobody [
+            set heading towards farTarget
+          ]
+          [
+            rt random 5
+            lt random 5
+          ]
+        ]
+
+        if xcor >= max-pxcor [ set heading 270 ]
+        if xcor <= min-pxcor [ set heading 90 ]
+        if ycor >= max-pycor [ set heading 180 ]
+        if ycor <= min-pycor [ set heading 0 ]
+        ifelse xcor < max-pxcor and xcor > min-pxcor and ycor > min-pycor and ycor < max-pycor [
+          set resupplying false
+        ]
+        [
+          if resupplying = false [
+            set supplyDelay 20
+            set resupplying true
+          ]
         ]
       ]
-    ]
-    [
-      ifelse farTarget != nobody [
-        set heading towards farTarget
+      [
+        ifelse heading < towardsxy resupplyX resupplyY [
+          rt 5
+        ]
+        [
+          lt 5
+        ]
+        set color cyan + 1
+      ]
+
+      ifelse distancexy resupplyX resupplyY < 2 [
+        set bombCount 4
+        set rocketCount 12
+        set machineGunAmmo 1000
+        if resupplying = false [
+          set supplyDelay 100
+          set resupplying true
+          set heading 180
+        ]
       ]
       [
-        rt random 15
-        lt random 15
+        set resupplying false
       ]
+      fd moveSpeed
     ]
-
-    if xcor >= (max-pxcor - 1) [ set heading 270 ]
-    if xcor <= (min-pxcor + 1) [ set heading 90 ]
-    if ycor >= (max-pycor - 1) [ set heading 180 ]
-    if ycor <= (min-pycor + 1) [ set heading 0 ]
-
-    if distancexy resupplyX resupplyY < 5 [
-      set bombCount 4
-      set rocketCount 12
-      set machineGunAmmo 1000
+    [
+      set supplyDelay supplyDelay - 1
     ]
-
-    fd moveSpeed
   ]
 end
 
 to display-labels
-  ifelse show-health = false [
+  if show-health = false and show-ammo = false [
     ask turtles [ set label "" ]
   ]
-  [
+  if show-health = true [
     ask turtles [ set label healthPoints ]
   ]
-end
-
-to setup-patches
-  ask patches [ set pcolor green ]
+  if show-ammo = true [
+    ask allAttackingB26 [ set label machineGunAmmo ]
+  ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-210
+219
 10
-626
-427
+1167
+437
 -1
 -1
-8.0
+7.4643
 1
 10
 1
@@ -554,9 +891,9 @@ GRAPHICS-WINDOW
 0
 1
 -25
-25
+100
 -25
-25
+30
 1
 1
 1
@@ -620,10 +957,10 @@ count attackers
 11
 
 PLOT
-9
-247
-209
-397
+8
+277
+208
+427
 Totals
 time
 totals
@@ -647,7 +984,7 @@ defender-number
 defender-number
 0
 500
-200.0
+500.0
 1
 1
 NIL
@@ -662,22 +999,22 @@ attacker-number
 attacker-number
 0
 100
-100.0
+46.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-215
-442
-417
-475
+213
+473
+415
+506
 initial-number-defending-b26
 initial-number-defending-b26
 0
 20
-2.0
+4.0
 1
 1
 NIL
@@ -696,29 +1033,14 @@ show-health
 
 SLIDER
 432
-443
+477
 605
-476
+510
 initial-number-seaFury
 initial-number-seaFury
 0
 10
-0.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-215
-483
-415
-516
-initial-number-t33
-initial-number-t33
-0
-10
-1.0
+4.0
 1
 1
 NIL
@@ -726,18 +1048,74 @@ HORIZONTAL
 
 SLIDER
 212
-528
-417
-561
-initial-number-attacking-b26
-initial-number-attacking-b26
+519
+412
+552
+initial-number-t33
+initial-number-t33
 0
-20
+10
 6.0
 1
 1
 NIL
 HORIZONTAL
+
+SLIDER
+208
+561
+413
+594
+initial-number-attacking-b26
+initial-number-attacking-b26
+0
+20
+10.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+431
+519
+647
+552
+attacker-number-beach-a
+attacker-number-beach-a
+0
+100
+70.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+433
+564
+650
+597
+attacker-number-beach-b
+attacker-number-beach-b
+0
+100
+62.0
+1
+1
+NIL
+HORIZONTAL
+
+SWITCH
+16
+223
+150
+256
+show-ammo
+show-ammo
+0
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?
