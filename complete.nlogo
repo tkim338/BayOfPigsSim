@@ -49,7 +49,9 @@ to setup
   ask patches [setup-swamp setup-water]
   setup-attackers-beach-a
   setup-attackers-beach-b
-  setup-defenders
+  setup-defenders-base-a
+  setup-defenders-base-b
+  setup-defenders-base-c
 
   setup-allB26
   setup-allT33
@@ -213,21 +215,6 @@ to setup-water
   if pxcor > 97 and pxcor <= 100 and pycor = -13 [set pcolor blue set patch-type "water"]
 end
 
-to setup-attackers
-  create-attackers attacker-number [
-    setxy random-xcor -25
-    set color red
-    set heading 0
-    set healthPoints 50
-    set accuracy 0.3
-    set attackRange 3
-    set damage 1
-    set targetLocationX 0
-    set targetLocationY 25
-    set moveSpeed 0.01
-  ]
- end
-
 to setup-attackers-beach-a
   create-attackers attacker-number-beach-a [
     setxy 10 + random-float 5 -22 + random-float 4
@@ -258,16 +245,42 @@ to setup-attackers-beach-b
   ]
 end
 
-to setup-defenders
-  create-defenders defender-number [
-    setxy random-xcor 25 + random-float 5
+to setup-defenders-base-a
+  create-defenders defender-number-base-a[
+    setxy 94 + random-float 6 -15 + random-float 30
     set color blue
     set heading 180
     set healthPoints 50
     set accuracy 0.3
     set attackRange 3
     set damage 1
-    set moveSpeed 0.01
+    set moveSpeed 0.015
+  ]
+end
+
+to setup-defenders-base-b
+  create-defenders defender-number-base-b[
+    setxy -20 + random-float 30 25 + random-float 5
+    set color blue
+    set heading 180
+    set healthPoints 50
+    set accuracy 0.3
+    set attackRange 3
+    set damage 1
+    set moveSpeed 0.015
+  ]
+end
+
+to setup-defenders-base-c
+  create-defenders defender-number-base-c[
+    setxy -25 + random-float 5 13 + random-float 12
+    set color blue
+    set heading 180
+    set healthPoints 50
+    set accuracy 0.3
+    set attackRange 3
+    set damage 1
+    set moveSpeed 0.015
   ]
 end
 
@@ -288,14 +301,14 @@ to setup-allB26
     set size 2
     set label-color red - 2
     set attackRange 10
-    set bombRadius 2
+    set bombRadius 1
     setxy random-xcor -25
     set healthPoints 100
     set shape "airplane"
     set resupplyX 0
     set resupplyY -25
     set bombCount 12
-    set moveSpeed 0.2
+    set moveSpeed 1
     set rocketCount 10
     set rocketRadius b26_rocketRadius
     set bombDamage b26_bombDamage
@@ -311,14 +324,14 @@ to setup-allB26
     set size 2
     set label-color blue - 2
     set attackRange 10
-    set bombRadius 2
+    set bombRadius 1
     setxy random-xcor 25
     set healthPoints 100
     set shape "airplane"
     set resupplyX 50
     set resupplyY 30
     set bombCount 12
-    set moveSpeed 0.2
+    set moveSpeed 1
     set rocketCount 10
     set rocketRadius b26_rocketRadius
     set bombDamage b26_bombDamage
@@ -346,10 +359,10 @@ to setup-allT33
     setxy random-xcor 25
     set healthPoints 100
     set shape "airplane"
-    set bombRadius 2
+    set bombRadius 1
     set bombCount 2
     set bombDamage 2
-    set moveSpeed 0.2
+    set moveSpeed 1.5
     set resupplyX 50
     set resupplyY 30
     set machineGunAmmo 1000
@@ -376,9 +389,9 @@ to setup-allSeaFury
     setxy random-xcor 25
     set healthPoints 100
     set shape "airplane"
-    set moveSpeed 0.2
+    set moveSpeed 1.5
     set bombCount 4
-    set bombRadius 2
+    set bombRadius 1
     set rocketCount 12
     set rocketRadius 2
     set rocketDamage seaFury_rocketDamage
@@ -1049,7 +1062,7 @@ initial-number-defending-b26
 initial-number-defending-b26
 0
 20
-4.0
+0.0
 1
 1
 NIL
@@ -1075,7 +1088,7 @@ initial-number-seaFury
 initial-number-seaFury
 0
 10
-4.0
+0.0
 1
 1
 NIL
@@ -1090,7 +1103,7 @@ initial-number-t33
 initial-number-t33
 0
 10
-6.0
+0.0
 1
 1
 NIL
@@ -1105,7 +1118,7 @@ initial-number-attacking-b26
 initial-number-attacking-b26
 0
 20
-10.0
+8.0
 1
 1
 NIL
@@ -1135,7 +1148,7 @@ attacker-number-beach-b
 attacker-number-beach-b
 0
 100
-62.0
+30.0
 1
 1
 NIL
@@ -1151,6 +1164,51 @@ show-ammo
 1
 1
 -1000
+
+SLIDER
+685
+474
+898
+507
+defender-number-base-a
+defender-number-base-a
+0
+200
+200.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+918
+474
+1133
+507
+defender-number-base-b
+defender-number-base-b
+0
+200
+150.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+1150
+473
+1363
+506
+defender-number-base-c
+defender-number-base-c
+0
+200
+100.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
