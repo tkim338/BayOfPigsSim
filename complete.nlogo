@@ -554,11 +554,11 @@ to move-allB26
           ]
         ]
 
-        if xcor >= max-pxcor [ set heading 270 ]
-        if xcor <= min-pxcor [ set heading 90 ]
-        if ycor >= max-pycor [ set heading 180 ]
-        if ycor <= min-pycor [ set heading 0 ]
-        ifelse xcor < max-pxcor and xcor > min-pxcor and ycor > min-pycor and ycor < max-pycor [
+        if xcor >= max-pxcor - 1 [ set heading 270 ]
+        if xcor <= min-pxcor + 1 [ set heading 90 ]
+        if ycor >= max-pycor - 1 [ set heading 180 ]
+        if ycor <= min-pycor + 1 [ set heading 0 ]
+        ifelse xcor < max-pxcor - 1 and xcor > min-pxcor + 1 and ycor > min-pycor + 1 and ycor < max-pycor - 1 [
           set resupplying false
         ]
         [
@@ -661,11 +661,11 @@ to move-allB26
           ]
         ]
 
-        if xcor >= max-pxcor [ set heading 270 ]
-        if xcor <= min-pxcor [ set heading 90 ]
-        if ycor >= max-pycor [ set heading 180 ]
-        if ycor <= min-pycor [ set heading 0 ]
-        ifelse xcor < max-pxcor and xcor > min-pxcor and ycor > min-pycor and ycor < max-pycor [
+        if xcor >= max-pxcor - 1 [ set heading 270 ]
+        if xcor <= min-pxcor + 1 [ set heading 90 ]
+        if ycor >= max-pycor - 1 [ set heading 180 ]
+        if ycor <= min-pycor + 1 [ set heading 0 ]
+        ifelse xcor < max-pxcor - 1 and xcor > min-pxcor + 1 and ycor > min-pycor + 1 and ycor < max-pycor - 1 [
           set resupplying false
         ]
         [
@@ -759,11 +759,11 @@ to move-allT33
           ]
         ]
 
-        if xcor >= max-pxcor [ set heading 270 ]
-        if xcor <= min-pxcor [ set heading 90 ]
-        if ycor >= max-pycor [ set heading 180 ]
-        if ycor <= min-pycor [ set heading 0 ]
-        ifelse xcor < max-pxcor and xcor > min-pxcor and ycor > min-pycor and ycor < max-pycor [
+        if xcor >= max-pxcor - 1 [ set heading 270 ]
+        if xcor <= min-pxcor + 1 [ set heading 90 ]
+        if ycor >= max-pycor - 1 [ set heading 180 ]
+        if ycor <= min-pycor + 1 [ set heading 0 ]
+        ifelse xcor < max-pxcor - 1 and xcor > min-pxcor + 1 and ycor > min-pycor + 1 and ycor < max-pycor - 1 [
           set resupplying false
         ]
         [
@@ -864,11 +864,11 @@ to move-allSeaFury
           ]
         ]
 
-        if xcor >= max-pxcor [ set heading 270 ]
-        if xcor <= min-pxcor [ set heading 90 ]
-        if ycor >= max-pycor [ set heading 180 ]
-        if ycor <= min-pycor [ set heading 0 ]
-        ifelse xcor < max-pxcor and xcor > min-pxcor and ycor > min-pycor and ycor < max-pycor [
+        if xcor >= max-pxcor - 1 [ set heading 270 ]
+        if xcor <= min-pxcor + 1 [ set heading 90 ]
+        if ycor >= max-pycor - 1 [ set heading 180 ]
+        if ycor <= min-pycor + 1 [ set heading 0 ]
+        ifelse xcor < max-pxcor - 1 and xcor > min-pxcor + 1 and ycor > min-pycor + 1 and ycor < max-pycor - 1 [
           set resupplying false
         ]
         [
