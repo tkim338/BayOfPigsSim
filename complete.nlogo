@@ -302,7 +302,7 @@ to setup-allB26
     set label-color red - 2
     set attackRange 10
     set bombRadius 1
-    setxy random-xcor -25
+    setxy random-xcor -23
     set healthPoints 100
     set shape "airplane"
     set resupplyX 0
@@ -312,12 +312,12 @@ to setup-allB26
     set rocketCount 10
     set rocketRadius b26_rocketRadius
     set bombDamage b26_bombDamage
-    set machineGunAmmo 1000
+    set machineGunAmmo 300
     set machineGunDamage b26_machineGunDamage
     set supporting 0
     set supplyDelay 0
     set heading 0
-    set healthPoints 1000
+    set healthPoints 500
   ]
   create-allDefendingB26 initial-number-defending-b26 [
     set color blue - 1
@@ -335,11 +335,11 @@ to setup-allB26
     set rocketCount 10
     set rocketRadius b26_rocketRadius
     set bombDamage b26_bombDamage
-    set machineGunAmmo 1000
+    set machineGunAmmo 300
     set machineGunDamage b26_machineGunDamage
     set supplyDelay 0
     set heading 180
-    set healthPoints 1000
+    set healthPoints 500
   ]
 end
 
@@ -365,7 +365,7 @@ to setup-allT33
     set moveSpeed 1.5
     set resupplyX 50
     set resupplyY 30
-    set machineGunAmmo 1000
+    set machineGunAmmo 300
     set machineGunDamage t33_machineGunDamage
     set supplyDelay 0
     set heading 180
@@ -396,13 +396,13 @@ to setup-allSeaFury
     set rocketRadius 2
     set rocketDamage seaFury_rocketDamage
     set bombDamage seaFury_bombDamage
-    set machineGunAmmo 1000
+    set machineGunAmmo 300
     set machineGunDamage seaFury_machineGunDamage
     set supplyDelay 0
     set resupplyX 50
     set resupplyY 30
     set heading 180
-    set healthPoints 500
+    set healthPoints 300
   ]
 end
 
@@ -485,7 +485,7 @@ to move-allB26
       set color red
       ifelse bombCount > 0 or rocketCount > 0 or machineGunAmmo > 0 [
 
-        let potentialTargets defenders in-cone attackRange 30
+        let potentialTargets up-to-n-of 10 defenders in-cone attackRange 30
         let farTarget max-one-of potentialTargets [distance myself]
         if bombCount >= 0 [
           let closeTargets defenders in-radius bombRadius
@@ -554,10 +554,6 @@ to move-allB26
           ]
         ]
 
-        if xcor >= max-pxcor - 1 [ set heading 270 ]
-        if xcor <= min-pxcor + 1 [ set heading 90 ]
-        if ycor >= max-pycor - 1 [ set heading 180 ]
-        if ycor <= min-pycor + 1 [ set heading 0 ]
         ifelse xcor < max-pxcor - 1 and xcor > min-pxcor + 1 and ycor > min-pycor + 1 and ycor < max-pycor - 1 [
           set resupplying false
         ]
@@ -565,6 +561,7 @@ to move-allB26
           if resupplying = false [
             set supplyDelay 20
             set resupplying true
+            set heading towardsxy random-pxcor random-pycor
           ]
         ]
       ]
@@ -581,7 +578,7 @@ to move-allB26
       ifelse distancexy resupplyX resupplyY < 2 [
         set bombCount 2
         set rocketCount 10
-        set machineGunAmmo 1000
+        set machineGunAmmo 500
         if resupplying = false [
           set supplyDelay 100
           set resupplying true
@@ -604,7 +601,7 @@ to move-allB26
       set color blue
       ifelse bombCount > 0 or rocketCount > 0 or machineGunAmmo > 0 [
 
-        let potentialTargets (turtle-set (attackers in-cone attackRange 30) (allAttackingB26 in-cone attackRange 30) )
+        let potentialTargets up-to-n-of 10 (turtle-set (attackers in-cone attackRange 30) (allAttackingB26 in-cone attackRange 30) )
         let farTarget max-one-of potentialTargets [distance myself]
         if bombCount >= 0 [
           let closeTargets attackers in-radius bombRadius
@@ -661,10 +658,6 @@ to move-allB26
           ]
         ]
 
-        if xcor >= max-pxcor - 1 [ set heading 270 ]
-        if xcor <= min-pxcor + 1 [ set heading 90 ]
-        if ycor >= max-pycor - 1 [ set heading 180 ]
-        if ycor <= min-pycor + 1 [ set heading 0 ]
         ifelse xcor < max-pxcor - 1 and xcor > min-pxcor + 1 and ycor > min-pycor + 1 and ycor < max-pycor - 1 [
           set resupplying false
         ]
@@ -672,6 +665,7 @@ to move-allB26
           if resupplying = false [
             set supplyDelay 20
             set resupplying true
+            set heading towardsxy random-pxcor random-pycor
           ]
         ]
       ]
@@ -688,7 +682,7 @@ to move-allB26
       ifelse distancexy resupplyX resupplyY < 2 [
         set bombCount 2
         set rocketCount 10
-        set machineGunAmmo 1000
+        set machineGunAmmo 500
         if resupplying = false [
           set supplyDelay 100
           set resupplying true
@@ -712,7 +706,7 @@ to move-allT33
       set color blue
       ifelse bombCount > 0 or machineGunAmmo > 0 [
 
-        let potentialTargets (turtle-set (attackers in-cone attackRange 30) (allAttackingB26 in-cone attackRange 30) )
+        let potentialTargets up-to-n-of 10 (turtle-set (attackers in-cone attackRange 30) (allAttackingB26 in-cone attackRange 30) )
         let farTarget max-one-of potentialTargets [distance myself]
         if bombCount >= 0 [
           let closeTargets attackers in-radius bombRadius
@@ -759,10 +753,6 @@ to move-allT33
           ]
         ]
 
-        if xcor >= max-pxcor - 1 [ set heading 270 ]
-        if xcor <= min-pxcor + 1 [ set heading 90 ]
-        if ycor >= max-pycor - 1 [ set heading 180 ]
-        if ycor <= min-pycor + 1 [ set heading 0 ]
         ifelse xcor < max-pxcor - 1 and xcor > min-pxcor + 1 and ycor > min-pycor + 1 and ycor < max-pycor - 1 [
           set resupplying false
         ]
@@ -770,6 +760,7 @@ to move-allT33
           if resupplying = false [
             set supplyDelay 20
             set resupplying true
+            set heading towardsxy random-pxcor random-pycor
           ]
         ]
       ]
@@ -785,7 +776,7 @@ to move-allT33
 
       ifelse distancexy resupplyX resupplyY < 2 [
         set bombCount 2
-        set machineGunAmmo 1000
+        set machineGunAmmo 500
         if resupplying = false [
           set supplyDelay 100
           set resupplying true
@@ -809,7 +800,7 @@ to move-allSeaFury
       set color blue
       ifelse bombCount > 0 or rocketCount > 0 or machineGunAmmo > 0 [
 
-        let potentialTargets (turtle-set (attackers in-cone attackRange 30) (allAttackingB26 in-cone attackRange 30) )
+        let potentialTargets up-to-n-of 10 (turtle-set (attackers in-cone attackRange 30) (allAttackingB26 in-cone attackRange 30) )
         let farTarget max-one-of potentialTargets [distance myself]
         if bombCount >= 0 [
           let closeTargets defenders in-radius bombRadius
@@ -864,10 +855,6 @@ to move-allSeaFury
           ]
         ]
 
-        if xcor >= max-pxcor - 1 [ set heading 270 ]
-        if xcor <= min-pxcor + 1 [ set heading 90 ]
-        if ycor >= max-pycor - 1 [ set heading 180 ]
-        if ycor <= min-pycor + 1 [ set heading 0 ]
         ifelse xcor < max-pxcor - 1 and xcor > min-pxcor + 1 and ycor > min-pycor + 1 and ycor < max-pycor - 1 [
           set resupplying false
         ]
@@ -875,6 +862,7 @@ to move-allSeaFury
           if resupplying = false [
             set supplyDelay 20
             set resupplying true
+            set heading towardsxy random-pxcor random-pycor
           ]
         ]
       ]
@@ -891,7 +879,7 @@ to move-allSeaFury
       ifelse distancexy resupplyX resupplyY < 2 [
         set bombCount 4
         set rocketCount 12
-        set machineGunAmmo 1000
+        set machineGunAmmo 500
         if resupplying = false [
           set supplyDelay 100
           set resupplying true
@@ -1088,7 +1076,7 @@ initial-number-seaFury
 initial-number-seaFury
 0
 10
-3.0
+7.0
 1
 1
 NIL
@@ -1103,7 +1091,7 @@ initial-number-t33
 initial-number-t33
 0
 10
-3.0
+6.0
 1
 1
 NIL
@@ -1118,7 +1106,7 @@ initial-number-attacking-b26
 initial-number-attacking-b26
 0
 20
-8.0
+13.0
 1
 1
 NIL
