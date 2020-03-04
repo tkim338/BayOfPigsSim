@@ -513,7 +513,7 @@ to move-allB26
         let allSeaFuryBehind (allSeaFury in-radius attackRange) with [not member? self allSeaFuryAhead]
         let allDefendingB26Behind (allDefendingB26 in-radius attackRange) with [not member? self allDefendingB26Ahead]
 
-        let behindTargets (turtle-set (turtle-set allT33Behind allSeaFuryBehind) allDefendingB26Behind)
+        let behindTargets (turtle-set allT33Behind allSeaFuryBehind allDefendingB26Behind)
 
         if machineGunAmmo >= 0 [
           ask potentialTargets [
@@ -526,7 +526,7 @@ to move-allB26
         ]
 
         ifelse supporting = 1 [
-          ifelse target != nobody [;and member? target potentialTargets [
+          ifelse target != nobody and distance target > attackRange [;and member? target potentialTargets [
             set heading towards target
           ]
           [
@@ -1062,7 +1062,7 @@ initial-number-defending-b26
 initial-number-defending-b26
 0
 20
-0.0
+3.0
 1
 1
 NIL
@@ -1075,7 +1075,7 @@ SWITCH
 208
 show-health
 show-health
-1
+0
 1
 -1000
 
@@ -1088,7 +1088,7 @@ initial-number-seaFury
 initial-number-seaFury
 0
 10
-0.0
+3.0
 1
 1
 NIL
@@ -1103,7 +1103,7 @@ initial-number-t33
 initial-number-t33
 0
 10
-0.0
+3.0
 1
 1
 NIL
