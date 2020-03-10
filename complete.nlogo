@@ -14,6 +14,7 @@ breed [ allT33 t33 ]
 
 turtles-own [ healthPoints accuracy attackRange damage moveSpeed turnAngle sightRange supporting target]
 attackers-own [targetLocationX targetLocationY]
+defenders-own [targetLocationX targetLocationY activated]
 allAttackingB26-own [ bombRadius bombDamage bombCount rocketRadius rocketRange rocketDamage rocketCount machineGunRange machineGunDamage machineGunAmmo resupplyX resupplyY supplyDelay resupplying ]
 allDefendingB26-own [ bombRadius bombDamage bombCount rocketRadius rocketRange rocketDamage rocketCount machineGunRange machineGunDamage machineGunAmmo resupplyX resupplyY supplyDelay resupplying ]
 allSeaFury-own [ bombRadius bombDamage bombCount rocketRange rocketDamage rocketRadius rocketCount machineGunRange machineGunDamage machineGunAmmo resupplyX resupplyY supplyDelay resupplying ]
@@ -217,7 +218,8 @@ end
 
 to setup-attackers-beach-a
   create-attackers attacker-number-beach-a [
-    setxy 10 + random-float 5 -22 + random-float 4
+    let rf 12 + random-float 6
+    setxy rf + random-float 1 (-5 / 6) * rf - 8
     set color red
     set heading 0
     set healthPoints 50
@@ -225,13 +227,14 @@ to setup-attackers-beach-a
     set attackRange 3
     set damage 1
     set targetLocationX 100
-    set targetLocationY -18
+    set targetLocationY -23 + random-float 6
     set moveSpeed 0.01
   ]
 end
 
 to setup-attackers-beach-b
   create-attackers attacker-number-beach-b [
+    let rf -6 + random-float 6
     setxy -14 + random-float 5 13 + random-float 4
     set color red
     set heading 0
@@ -239,15 +242,18 @@ to setup-attackers-beach-b
     set accuracy 0.3
     set attackRange 3
     set damage 1
-    set targetLocationX -24 + random-float 27
-    set targetLocationY 24 - random-float 10
+    set targetLocationX rf
+    set targetLocationY (2 / 3) * rf + 12
     set moveSpeed 0.01
   ]
 end
 
 to setup-defenders-base-a
   create-defenders defender-number-base-a[
-    setxy 94 + random-float 6 -15 + random-float 30
+    let rf 63 + random-float 8
+    setxy 94 + random-float 6 -15 + random-float 15
+    set targetLocationX rf + random-float 1.5
+    set targetLocationY ((-17 / 11) * rf) + (954 / 11)
     set color blue
     set heading 180
     set healthPoints 50
@@ -255,6 +261,7 @@ to setup-defenders-base-a
     set attackRange 3
     set damage 1
     set moveSpeed 0.015
+    set activated false
   ]
 end
 
@@ -268,12 +275,13 @@ to setup-defenders-base-b
     set attackRange 3
     set damage 1
     set moveSpeed 0.015
+    set activated true
   ]
 end
 
 to setup-defenders-base-c
   create-defenders defender-number-base-c[
-    setxy -25 + random-float 5 13 + random-float 12
+    setxy -25 + random-float 5 19 + random-float 8
     set color blue
     set heading 180
     set healthPoints 50
@@ -281,6 +289,7 @@ to setup-defenders-base-c
     set attackRange 3
     set damage 1
     set moveSpeed 0.015
+    set activated true
   ]
 end
 
@@ -452,6 +461,7 @@ end
 to move-defenders
   ask defenders[
     ifelse count attackers with [healthPoints > 0] in-radius attackRange >= 1 [
+      set activated true
       set color 108
       let potentialTarget min-one-of attackers with [healthPoints > 0] [distance myself]
       let damageHolder damage
@@ -469,12 +479,22 @@ to move-defenders
       ]
     ]
     [
-      set heading towards min-one-of attackers [distance myself]
+      ifelse activated = true [
+        set heading towards min-one-of attackers [distance myself]
+      ]
+      [
+        set heading towardsxy targetLocationX targetLocationY
+      ]
       set color blue
       set moveSpeed 0.01
         if pcolor = 54
     [set moveSpeed 0.007]
       forward moveSpeed
+    ]
+    if activated = true [
+      ask defenders with [activated = false] in-radius 2 [
+        set activated true
+      ]
     ]
   ]
 end
@@ -1050,7 +1070,7 @@ initial-number-defending-b26
 initial-number-defending-b26
 0
 20
-3.0
+0.0
 1
 1
 NIL
@@ -1063,7 +1083,7 @@ SWITCH
 208
 show-health
 show-health
-0
+1
 1
 -1000
 
@@ -1076,7 +1096,7 @@ initial-number-seaFury
 initial-number-seaFury
 0
 10
-7.0
+0.0
 1
 1
 NIL
@@ -1091,7 +1111,7 @@ initial-number-t33
 initial-number-t33
 0
 10
-6.0
+0.0
 1
 1
 NIL
@@ -1106,7 +1126,7 @@ initial-number-attacking-b26
 initial-number-attacking-b26
 0
 20
-13.0
+0.0
 1
 1
 NIL
