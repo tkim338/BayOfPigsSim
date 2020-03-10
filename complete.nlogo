@@ -1032,45 +1032,15 @@ PENS
 "attackers" 1.0 0 -2674135 true "" "plot count attackers"
 
 SLIDER
-24
-441
-196
-474
-defender-number
-defender-number
-0
-500
-500.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-22
-528
-194
-561
-attacker-number
-attacker-number
-0
-100
-46.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-213
-473
-415
-506
+733
+470
+935
+503
 initial-number-defending-b26
 initial-number-defending-b26
 0
 20
-0.0
+11.0
 1
 1
 NIL
@@ -1088,30 +1058,30 @@ show-health
 -1000
 
 SLIDER
-432
-477
-605
-510
+746
+513
+919
+546
 initial-number-seaFury
 initial-number-seaFury
 0
 10
-0.0
+5.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-212
-519
-412
-552
+739
+554
+939
+587
 initial-number-t33
 initial-number-t33
 0
 10
-0.0
+5.0
 1
 1
 NIL
@@ -1126,37 +1096,37 @@ initial-number-attacking-b26
 initial-number-attacking-b26
 0
 20
-0.0
+20.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-431
-519
-647
-552
+195
+463
+411
+496
 attacker-number-beach-a
 attacker-number-beach-a
 0
 100
-70.0
+15.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-433
-564
-650
-597
+197
+508
+414
+541
 attacker-number-beach-b
 attacker-number-beach-b
 0
 100
-30.0
+15.0
 1
 1
 NIL
@@ -1174,10 +1144,10 @@ show-ammo
 -1000
 
 SLIDER
-685
-474
-898
-507
+515
+469
+728
+502
 defender-number-base-a
 defender-number-base-a
 0
@@ -1189,25 +1159,25 @@ NIL
 HORIZONTAL
 
 SLIDER
-918
-474
-1133
-507
+518
+517
+733
+550
 defender-number-base-b
 defender-number-base-b
 0
 200
-150.0
+200.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-1150
-473
-1363
-506
+516
+557
+729
+590
 defender-number-base-c
 defender-number-base-c
 0
@@ -1564,6 +1534,46 @@ NetLogo 6.1.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
+<experiments>
+  <experiment name="experiment" repetitions="1" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <metric>count turtles</metric>
+    <metric>count attackers</metric>
+    <metric>count defenders</metric>
+    <enumeratedValueSet variable="attacker-number-beach-a">
+      <value value="15"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="defender-number-base-a">
+      <value value="200"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="initial-number-attacking-b26" first="0" step="1" last="20"/>
+    <enumeratedValueSet variable="initial-number-defending-b26">
+      <value value="11"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="initial-number-t33">
+      <value value="5"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="initial-number-seaFury">
+      <value value="5"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="attacker-number-beach-b">
+      <value value="15"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="defender-number-base-b">
+      <value value="200"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="show-health">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="defender-number-base-c">
+      <value value="100"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="show-ammo">
+      <value value="false"/>
+    </enumeratedValueSet>
+  </experiment>
+</experiments>
 @#$#@#$#@
 @#$#@#$#@
 default
