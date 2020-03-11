@@ -1040,7 +1040,7 @@ initial-number-defending-b26
 initial-number-defending-b26
 0
 20
-0.0
+11.0
 1
 1
 NIL
@@ -1066,7 +1066,7 @@ initial-number-seaFury
 initial-number-seaFury
 0
 10
-0.0
+5.0
 1
 1
 NIL
@@ -1081,7 +1081,7 @@ initial-number-t33
 initial-number-t33
 0
 10
-0.0
+5.0
 1
 1
 NIL
@@ -1096,7 +1096,7 @@ initial-number-attacking-b26
 initial-number-attacking-b26
 0
 20
-20.0
+0.0
 1
 1
 NIL
@@ -1573,7 +1573,7 @@ NetLogo 6.1.1
       <value value="false"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="tkim338" repetitions="1" runMetricsEveryStep="true">
+  <experiment name="best_case" repetitions="10" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
     <metric>count defenders</metric>
@@ -1581,13 +1581,60 @@ NetLogo 6.1.1
     <enumeratedValueSet variable="attacker-number-beach-a">
       <value value="15"/>
     </enumeratedValueSet>
-    <steppedValueSet variable="initial-number-defending-b26" first="0" step="1" last="11"/>
-    <steppedValueSet variable="initial-number-attacking-b26" first="0" step="1" last="20"/>
-    <steppedValueSet variable="initial-number-t33" first="0" step="1" last="5"/>
+    <enumeratedValueSet variable="initial-number-defending-b26">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="initial-number-attacking-b26">
+      <value value="20"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="initial-number-t33">
+      <value value="0"/>
+    </enumeratedValueSet>
     <enumeratedValueSet variable="defender-number-base-a">
       <value value="200"/>
     </enumeratedValueSet>
-    <steppedValueSet variable="initial-number-seaFury" first="0" step="1" last="5"/>
+    <enumeratedValueSet variable="initial-number-seaFury">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="attacker-number-beach-b">
+      <value value="15"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="defender-number-base-b">
+      <value value="200"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="show-health">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="defender-number-base-c">
+      <value value="100"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="show-ammo">
+      <value value="false"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="historical" repetitions="10" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <metric>count attackers</metric>
+    <metric>count defenders</metric>
+    <enumeratedValueSet variable="attacker-number-beach-a">
+      <value value="15"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="defender-number-base-a">
+      <value value="200"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="initial-number-attacking-b26">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="initial-number-defending-b26">
+      <value value="11"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="initial-number-t33">
+      <value value="5"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="initial-number-seaFury">
+      <value value="5"/>
+    </enumeratedValueSet>
     <enumeratedValueSet variable="attacker-number-beach-b">
       <value value="15"/>
     </enumeratedValueSet>
