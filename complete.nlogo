@@ -60,15 +60,15 @@ to setup
 
   display-labels
 
-  set b26_bombDamage 2
-  set b26_machineGunDamage 1
-  set b26_rocketDamage 2
+  set b26_bombDamage 1
+  set b26_machineGunDamage 0.5
+  set b26_rocketDamage 1
   set b26_rocketRadius 2
   set t33_machineGunDamage 1
-  set t33_bombDamage 2
-  set seaFury_machineGunDamage 1
-  set seaFury_bombDamage 2
-  set seaFury_rocketDamage 2
+  set t33_bombDamage 1
+  set seaFury_machineGunDamage 0.5
+  set seaFury_bombDamage 1
+  set seaFury_rocketDamage 1
   set seaFury_rocketRadius 2
 
   reset-ticks
@@ -222,7 +222,7 @@ to setup-attackers-beach-a
     setxy rf + random-float 1 (-5 / 6) * rf - 8
     set color red
     set heading 0
-    set healthPoints 50
+    set healthPoints 100
     set accuracy 0.3
     set attackRange 3
     set damage 1
@@ -238,7 +238,7 @@ to setup-attackers-beach-b
     setxy -14 + random-float 5 13 + random-float 4
     set color red
     set heading 0
-    set healthPoints 50
+    set healthPoints 100
     set accuracy 0.3
     set attackRange 3
     set damage 1
@@ -256,7 +256,7 @@ to setup-defenders-base-a
     set targetLocationY ((-17 / 11) * rf) + (954 / 11)
     set color blue
     set heading 180
-    set healthPoints 50
+    set healthPoints 100
     set accuracy 0.3
     set attackRange 3
     set damage 1
@@ -270,7 +270,7 @@ to setup-defenders-base-b
     setxy -20 + random-float 30 25 + random-float 5
     set color blue
     set heading 180
-    set healthPoints 50
+    set healthPoints 100
     set accuracy 0.3
     set attackRange 3
     set damage 1
@@ -284,7 +284,7 @@ to setup-defenders-base-c
     setxy -25 + random-float 5 19 + random-float 8
     set color blue
     set heading 180
-    set healthPoints 50
+    set healthPoints 100
     set accuracy 0.3
     set attackRange 3
     set damage 1
@@ -1053,7 +1053,7 @@ SWITCH
 208
 show-health
 show-health
-1
+0
 1
 -1000
 
