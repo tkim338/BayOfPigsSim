@@ -562,16 +562,17 @@ to move-allB26
             ]
           ]
         ]
-        [
-          ifelse farTarget != nobody [
-            set heading towards farTarget
-            set color red + 1
-          ]
-          [
+        [ ; not supporting
+          ;ifelse farTarget != nobody [
+          ;  set heading towards farTarget
+          ;  set color red + 1
+          ;]
+          ;[
             set color red
-            rt random 5
-            lt random 5
-          ]
+            ;rt random 5
+            ;lt random 5
+          set heading towardsxy resupplyX resupplyY
+          ;]
         ]
 
         ifelse xcor < max-pxcor - 1 and xcor > min-pxcor + 1 and ycor > min-pycor + 1 and ycor < max-pycor - 1 [
@@ -587,12 +588,13 @@ to move-allB26
       ]
       [
 
-        ifelse heading < towardsxy resupplyX resupplyY [
-          rt 5
-        ]
-        [
-          lt 5
-        ]
+        ;ifelse heading < towardsxy resupplyX resupplyY [
+        ;  rt 5
+        ;]
+        ;[
+        ;  lt 5
+        ;]
+        set heading towardsxy resupplyX resupplyY
         set color orange + 1
       ]
       ifelse distancexy resupplyX resupplyY < 2 [
@@ -666,16 +668,17 @@ to move-allB26
             ]
           ]
         ]
-        [
-          ifelse farTarget != nobody [
-            set heading towards farTarget
-            set color blue + 1
-          ]
-          [
+        [ ; not supporting
+          ;ifelse farTarget != nobody [
+          ;  set heading towards farTarget
+          ;  set color blue + 1
+          ;]
+          ;[
             set color blue
-            rt random 5
-            lt random 5
-          ]
+          ;  rt random 5
+          ;  lt random 5
+          set heading towardsxy resupplyX resupplyY
+          ;]
         ]
 
         ifelse xcor < max-pxcor - 1 and xcor > min-pxcor + 1 and ycor > min-pycor + 1 and ycor < max-pycor - 1 [
@@ -763,14 +766,17 @@ to move-allT33
             ]
           ]
         ]
-        [
-          ifelse farTarget != nobody [
-            set heading towards farTarget
-          ]
-          [
-            rt random 5
-            lt random 5
-          ]
+        [ ; not supporting
+          ;ifelse farTarget != nobody [
+          ;  set heading towards farTarget
+          ;  set color blue + 1
+          ;]
+          ;[
+            set color blue
+          ;  rt random 5
+          ;  lt random 5
+          set heading towardsxy resupplyX resupplyY
+          ;]
         ]
 
         ifelse xcor < max-pxcor - 1 and xcor > min-pxcor + 1 and ycor > min-pycor + 1 and ycor < max-pycor - 1 [
@@ -865,14 +871,17 @@ to move-allSeaFury
             ]
           ]
         ]
-        [
-          ifelse farTarget != nobody [
-            set heading towards farTarget
-          ]
-          [
-            rt random 5
-            lt random 5
-          ]
+                [ ; not supporting
+          ;ifelse farTarget != nobody [
+          ;  set heading towards farTarget
+          ;  set color blue + 1
+          ;]
+          ;[
+            set color blue
+          ;  rt random 5
+          ;  lt random 5
+          set heading towardsxy resupplyX resupplyY
+          ;]
         ]
 
         ifelse xcor < max-pxcor - 1 and xcor > min-pxcor + 1 and ycor > min-pycor + 1 and ycor < max-pycor - 1 [
@@ -1096,7 +1105,7 @@ initial-number-attacking-b26
 initial-number-attacking-b26
 0
 20
-0.0
+20.0
 1
 1
 NIL
