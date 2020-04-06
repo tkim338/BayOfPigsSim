@@ -234,7 +234,7 @@ end
 
 to setup-attackers-beach-b
   create-attackers attacker-number-beach-b [
-    let rf -6 + random-float 6
+    let rf 100 + random-float 6
     setxy -14 + random-float 5 13 + random-float 4
     set color red
     set heading 0
@@ -243,17 +243,17 @@ to setup-attackers-beach-b
     set attackRange 3
     set damage 1
     set targetLocationX rf
-    set targetLocationY (2 / 3) * rf + 12
+    set targetLocationY (2 / 3) * rf + 12 - 100
     set moveSpeed 0.01
   ]
 end
 
 to setup-defenders-base-a
   create-defenders defender-number-base-a[
-    let rf 63 + random-float 8
+    let rf 0 + random-float 8
     setxy 94 + random-float 6 -15 + random-float 15
     set targetLocationX rf + random-float 1.5
-    set targetLocationY ((-17 / 11) * rf) + (954 / 11)
+    set targetLocationY ((-17 / 11) * rf) + (954 / 11) - 80
     set color blue
     set heading 180
     set healthPoints 100
@@ -563,16 +563,9 @@ to move-allB26
           ]
         ]
         [ ; not supporting
-          ;ifelse farTarget != nobody [
-          ;  set heading towards farTarget
-          ;  set color red + 1
-          ;]
-          ;[
             set color red
-            ;rt random 5
-            ;lt random 5
-          set heading towardsxy resupplyX resupplyY
-          ;]
+          ;set heading towardsxy resupplyX resupplyY
+          rt 5
         ]
 
         ifelse xcor < max-pxcor - 1 and xcor > min-pxcor + 1 and ycor > min-pycor + 1 and ycor < max-pycor - 1 [
@@ -588,12 +581,6 @@ to move-allB26
       ]
       [
 
-        ;ifelse heading < towardsxy resupplyX resupplyY [
-        ;  rt 5
-        ;]
-        ;[
-        ;  lt 5
-        ;]
         set heading towardsxy resupplyX resupplyY
         set color orange + 1
       ]
@@ -1049,7 +1036,7 @@ initial-number-defending-b26
 initial-number-defending-b26
 0
 20
-11.0
+0.0
 1
 1
 NIL
@@ -1075,7 +1062,7 @@ initial-number-seaFury
 initial-number-seaFury
 0
 10
-5.0
+0.0
 1
 1
 NIL
@@ -1090,7 +1077,7 @@ initial-number-t33
 initial-number-t33
 0
 10
-5.0
+0.0
 1
 1
 NIL
@@ -1105,7 +1092,7 @@ initial-number-attacking-b26
 initial-number-attacking-b26
 0
 20
-20.0
+0.0
 1
 1
 NIL
@@ -1120,7 +1107,7 @@ attacker-number-beach-a
 attacker-number-beach-a
 0
 100
-15.0
+0.0
 1
 1
 NIL
@@ -1135,7 +1122,7 @@ attacker-number-beach-b
 attacker-number-beach-b
 0
 100
-15.0
+22.0
 1
 1
 NIL
@@ -1148,7 +1135,7 @@ SWITCH
 256
 show-ammo
 show-ammo
-1
+0
 1
 -1000
 
@@ -1161,7 +1148,7 @@ defender-number-base-a
 defender-number-base-a
 0
 200
-200.0
+51.0
 1
 1
 NIL
@@ -1176,7 +1163,7 @@ defender-number-base-b
 defender-number-base-b
 0
 200
-200.0
+0.0
 1
 1
 NIL
@@ -1191,7 +1178,7 @@ defender-number-base-c
 defender-number-base-c
 0
 200
-100.0
+0.0
 1
 1
 NIL
