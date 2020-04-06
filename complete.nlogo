@@ -570,9 +570,13 @@ to move-allB26
             [
               set color red + 1
               lt 20 + random-float 1
+              if not any? defenders in-radius (2 * attackRange) [
+                set circling 0
+              ]
             ]
           ]
           [
+            set circling 0
             set color red
             set heading towardsxy resupplyX resupplyY
           ]
@@ -648,7 +652,7 @@ to move-allB26
           ]
         ]
         [ ; not supporting
-          ifelse circling = 1 [
+          ifelse circling = 1 and any? defenders in-radius (2 * attackRange) [
             ifelse member? supportLocation (patches in-cone 1000 30) [
               set color blue
               set heading towards supportLocation
@@ -656,6 +660,9 @@ to move-allB26
             [
               set color blue + 1
               rt 20 + random-float 1
+              if not any? attackers in-radius (2 * attackRange) [
+                set circling 0
+              ]
             ]
           ]
           [
@@ -728,7 +735,7 @@ to move-allT33
           ]
         ]
         [ ; not supporting
-          ifelse circling = 1 [
+          ifelse circling = 1 and any? defenders in-radius (2 * attackRange) [
             ifelse member? supportLocation (patches in-cone 1000 30) [
               set color blue
               set heading towards supportLocation
@@ -736,6 +743,9 @@ to move-allT33
             [
               set color blue + 1
               rt 20 + random-float 1
+              if not any? attackers in-radius (2 * attackRange) [
+                set circling 0
+              ]
             ]
           ]
           [
@@ -815,7 +825,7 @@ to move-allSeaFury
           ]
         ]
       [ ; not supporting
-          ifelse circling = 1 [
+          ifelse circling = 1 and any? defenders in-radius (2 * attackRange) [
             ifelse member? supportLocation (patches in-cone 1000 30) [
               set color blue
               set heading towards supportLocation
@@ -823,6 +833,9 @@ to move-allSeaFury
             [
               set color blue + 1
               rt 20 + random-float 1
+              if not any? attackers in-radius (2 * attackRange) [
+                set circling 0
+              ]
             ]
           ]
           [
@@ -981,7 +994,7 @@ initial-number-defending-b26
 initial-number-defending-b26
 0
 20
-1.0
+9.0
 1
 1
 NIL
@@ -1007,7 +1020,7 @@ initial-number-seaFury
 initial-number-seaFury
 0
 10
-1.0
+5.0
 1
 1
 NIL
@@ -1022,7 +1035,7 @@ initial-number-t33
 initial-number-t33
 0
 10
-2.0
+5.0
 1
 1
 NIL
@@ -1037,7 +1050,7 @@ initial-number-attacking-b26
 initial-number-attacking-b26
 0
 20
-8.0
+20.0
 1
 1
 NIL
@@ -1052,7 +1065,7 @@ attacker-number-beach-a
 attacker-number-beach-a
 0
 100
-100.0
+59.0
 1
 1
 NIL
@@ -1067,7 +1080,7 @@ attacker-number-beach-b
 attacker-number-beach-b
 0
 100
-0.0
+52.0
 1
 1
 NIL
@@ -1108,7 +1121,7 @@ defender-number-base-b
 defender-number-base-b
 0
 200
-0.0
+101.0
 1
 1
 NIL
@@ -1123,7 +1136,7 @@ defender-number-base-c
 defender-number-base-c
 0
 200
-0.0
+126.0
 1
 1
 NIL
