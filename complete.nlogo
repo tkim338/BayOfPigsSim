@@ -339,7 +339,7 @@ to setup-allB26
     set shape "airplane"
     set resupplyX 50
     set resupplyY 30
-    setxy resupplyX - 1 resupplyY - 1
+    setxy resupplyX - 2 resupplyY - 2
     set bombCount 12
     set moveSpeed 1
     set rocketCount 10
@@ -666,6 +666,7 @@ to move-allB26
             ]
           ]
           [
+            set circling 0
             set color blue
             set heading towardsxy resupplyX resupplyY
           ]
@@ -749,6 +750,7 @@ to move-allT33
             ]
           ]
           [
+            set circling 0
             set color blue
             set heading towardsxy resupplyX resupplyY
           ]
@@ -839,6 +841,7 @@ to move-allSeaFury
             ]
           ]
           [
+            set circling 0
             set color blue
             set heading towardsxy resupplyX resupplyY
           ]
@@ -994,7 +997,7 @@ initial-number-defending-b26
 initial-number-defending-b26
 0
 20
-9.0
+5.0
 1
 1
 NIL
@@ -1007,7 +1010,7 @@ SWITCH
 208
 show-health
 show-health
-0
+1
 1
 -1000
 
@@ -1020,7 +1023,7 @@ initial-number-seaFury
 initial-number-seaFury
 0
 10
-5.0
+4.0
 1
 1
 NIL
@@ -1035,7 +1038,7 @@ initial-number-t33
 initial-number-t33
 0
 10
-5.0
+4.0
 1
 1
 NIL
@@ -1050,7 +1053,7 @@ initial-number-attacking-b26
 initial-number-attacking-b26
 0
 20
-20.0
+0.0
 1
 1
 NIL
