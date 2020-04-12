@@ -234,7 +234,7 @@ end
 
 to setup-attackers-beach-b
   create-attackers attacker-number-beach-b [
-    let rf 100 + random-float 6
+    let rf -6 + random-float 6
     setxy -14 + random-float 5 13 + random-float 4
     set color red
     set heading 0
@@ -243,7 +243,7 @@ to setup-attackers-beach-b
     set attackRange 3
     set damage 1
     set targetLocationX rf
-    set targetLocationY (2 / 3) * rf + 12 - 100
+    set targetLocationY (2 / 3) * rf + 12
     set moveSpeed 0.01
   ]
 end
